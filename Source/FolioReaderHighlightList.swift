@@ -80,7 +80,7 @@ class FolioReaderHighlightList: UITableViewController {
         if (highlight.type == HighlightStyle.underline.rawValue) {
             text.addAttribute(NSAttributedString.Key.backgroundColor, value: UIColor.clear, range: range)
             text.addAttribute(NSAttributedString.Key.underlineColor, value: HighlightStyle.colorForStyle(highlight.type, nightMode: self.folioReader.nightMode), range: range)
-            text.addAttribute(NSAttributedString.Key.underlineStyle, value: NSNumber(value: NSUnderlineStyle.single.rawValue as Int), range: range)
+            text.addAttribute(NSAttributedString.Key.underlineStyle, value: NSNumber(value: NSUnderlineStyle.styleSingle.rawValue as Int), range: range)
         } else {
             text.addAttribute(NSAttributedString.Key.backgroundColor, value: HighlightStyle.colorForStyle(highlight.type, nightMode: self.folioReader.nightMode), range: range)
         }

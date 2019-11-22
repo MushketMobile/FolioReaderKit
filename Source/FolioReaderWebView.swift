@@ -165,7 +165,7 @@ open class FolioReaderWebView: UIWebView {
             guard let startOffset = dic["startOffset"] else { return false }
             guard let endOffset = dic["endOffset"] else { return false }
             
-            let rect = NSCoder.cgRect(for: rectString)
+            let rect = CGRectFromString(rectString)
 
             guard
                 let html = js("getHTML()"),
@@ -222,7 +222,7 @@ open class FolioReaderWebView: UIWebView {
             guard let startOffset = dic["startOffset"] else { return false }
             guard let endOffset = dic["endOffset"] else { return false }
             
-            let rect = NSCoder.cgRect(for: rectString)
+            let rect = CGRectFromString(rectString)
             
             guard
                 let html = js("getHTML()"),

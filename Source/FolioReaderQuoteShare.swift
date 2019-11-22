@@ -52,7 +52,6 @@ class FolioReaderQuoteShare: UIViewController {
 
         self.setCloseButton(withConfiguration: self.readerConfig)
         configureNavBar()
-
         let titleAttrs = [NSAttributedString.Key.foregroundColor: self.readerConfig.tintColor]
         let share = UIBarButtonItem(title: self.readerConfig.localizedShare, style: .plain, target: self, action: #selector(shareQuote(_:)))
         share.setTitleTextAttributes(titleAttrs, for: UIControl.State())
@@ -168,7 +167,7 @@ class FolioReaderQuoteShare: UIViewController {
         collectionView.dataSource = self
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = background
-        collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         view.addSubview(collectionView)
 
         if (UIDevice.current.userInterfaceIdiom == .phone) {
@@ -408,13 +407,9 @@ extension FolioReaderQuoteShare: UICollectionViewDelegate {
 // MARK: ImagePicker delegate
 
 extension FolioReaderQuoteShare: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
-
-        if let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.editedImage)] as? UIImage {
-
-            let quoteImage = QuoteImage(withImage: image, alpha: 0.6, backgroundColor: UIColor.black)
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let editedImage = info[UIImagePickerControllerEditedImage] as? UIImage {
+            let quoteImage = QuoteImage(withImage: editedImage, alpha: 0.6, backgroundColor: UIColor.black)
 
             collectionView.performBatchUpdates({
                 self.dataSource.insert(quoteImage, at: 0)
@@ -427,14 +422,4 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
         
         self.dismiss(animated: true, completion: nil)
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
-	return input.rawValue
 }

@@ -63,9 +63,9 @@ class PageViewController: UIPageViewController {
         setupButtons()
         closeButton = setCloseButton()
         viewList = [viewControllerOne, viewControllerTwo, viewControllerThree]
-        viewControllerOne.didMove(toParent: self)
-        viewControllerTwo.didMove(toParent: self)
-        viewControllerThree.didMove(toParent: self)
+        viewControllerOne.didMove(toParentViewController: self)
+        viewControllerTwo.didMove(toParentViewController: self)
+        viewControllerThree.didMove(toParentViewController: self)
         self.delegate = self
         self.dataSource = self
         self.view.backgroundColor = UIColor.white

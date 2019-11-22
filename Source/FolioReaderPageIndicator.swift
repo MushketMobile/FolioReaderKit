@@ -81,11 +81,11 @@ class FolioReaderPageIndicator: UIView {
         let currentColor = UIColor(cgColor: layer.shadowColor!)
         animation.fromValue = currentColor.cgColor
         animation.toValue = color.cgColor
-        animation.fillMode = CAMediaTimingFillMode.forwards
+        animation.fillMode = kCAFillModeForwards
         animation.isRemovedOnCompletion = false
         animation.duration = 0.6
         animation.delegate = self
-        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         layer.add(animation, forKey: "shadowColor")
     }
 

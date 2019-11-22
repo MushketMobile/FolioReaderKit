@@ -162,12 +162,12 @@ class FolioReaderPlayerMenu: UIViewController, SMSegmentViewDelegate, UIGestureR
         style1.setTitleColor(normalColor, for: UIControl.State())
         style1.setAttributedTitle(NSAttributedString(string: "Style", attributes: [
             NSAttributedString.Key.foregroundColor: normalColor,
-            NSAttributedString.Key.underlineStyle: NSUnderlineStyle.patternDot.rawValue|NSUnderlineStyle.single.rawValue,
+            NSAttributedString.Key.underlineStyle: NSUnderlineStyle.patternDot.rawValue|NSUnderlineStyle.styleSingle.rawValue,
             NSAttributedString.Key.underlineColor: normalColor
             ]), for: UIControl.State())
         style1.setAttributedTitle(NSAttributedString(string: self.readerConfig.localizedPlayerMenuStyle, attributes: [
             NSAttributedString.Key.foregroundColor: self.folioReader.isNight(UIColor.white, UIColor.black),
-            NSAttributedString.Key.underlineStyle: NSUnderlineStyle.patternDot.rawValue|NSUnderlineStyle.single.rawValue,
+            NSAttributedString.Key.underlineStyle: NSUnderlineStyle.patternDot.rawValue|NSUnderlineStyle.styleSingle.rawValue,
             NSAttributedString.Key.underlineColor: selectedColor
             ]), for: .selected)
         menuView.addSubview(style1);

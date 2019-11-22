@@ -144,9 +144,9 @@ open class FolioReaderContainer: UIViewController {
         if let _centerNavigationController = self.centerNavigationController {
             _centerNavigationController.view.backgroundColor = UIColor.blue
             self.view.addSubview(_centerNavigationController.view)
-            self.addChild(_centerNavigationController)
+            self.addChildViewController(_centerNavigationController)
         }
-        self.centerNavigationController?.didMove(toParent: self)
+        self.centerNavigationController?.didMove(toParentViewController: self)
 
         if #available(iOS 9.0, *) {
             view.semanticContentAttribute = .forceLeftToRight

@@ -29,7 +29,7 @@ class FolioReaderSearchViewController: UIViewController, UITableViewDataSource, 
     override func viewDidLoad() {
         super.viewDidLoad()
         titleLabel.text = NSLocalizedString("FilioReader.FolioReaderSearch.searchResult", comment: "FilioReader.FolioReaderSearch: title 'Search result'")
-        tableView.rowHeight = UITableView.automaticDimension
+        tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 120
         setCloseButton(withConfiguration: nil)
         configurateTable()

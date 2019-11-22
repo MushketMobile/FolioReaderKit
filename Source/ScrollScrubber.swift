@@ -221,7 +221,7 @@ class ScrollScrubber: NSObject, UIScrollViewDelegate {
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollDeltaTimer = Timer(timeInterval:0.5, target: self, selector: #selector(ScrollScrubber.resetScrollDelta), userInfo: nil, repeats: false)
-        RunLoop.current.add(scrollDeltaTimer, forMode: RunLoop.Mode.common)
+        RunLoop.current.add(scrollDeltaTimer, forMode: RunLoopMode.commonModes)
     }
 
     @objc func resetScrollDelta() {

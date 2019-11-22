@@ -370,7 +370,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
             shouldShowBar = false
 
             guard let decoded = url.absoluteString.removingPercentEncoding else { return false }
-            let rect = NSCoder.cgRect(for: decoded.substring(from: decoded.index(decoded.startIndex, offsetBy: 12)))
+            let rect = CGRectFromString(decoded.substring(from: decoded.index(decoded.startIndex, offsetBy: 12)))
 
             webView.createMenu(options: true)
             let point = CGPoint(x: rect.origin.x + rect.size.width/2, y: rect.origin.y)
@@ -522,7 +522,7 @@ open class FolioReaderPage: UICollectionViewCell, UIWebViewDelegate, UIGestureRe
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 if let selected = self.webView.js("getSelectedText()"), selected.isEmpty == false, let getRectForSelectedText = self.webView.js("getRectForSelectedText()") {
-                    let rect = NSCoder.cgRect(for: getRectForSelectedText)
+                    let rect = CGRectFromString(getRectForSelectedText)
                     self.webView.showMenu(touchPoint: CGPoint.init(x: rect.origin.x + rect.size.width/2, y: rect.origin.y))
                 } else {
                     self.webView.hiddenMenu()

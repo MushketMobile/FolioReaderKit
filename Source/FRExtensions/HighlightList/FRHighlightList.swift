@@ -54,7 +54,7 @@ class FRHighlightList: UIViewController {
     private func configurateTable() {
         self.tableView.register(UINib(nibName: "FRHighlightListCell", bundle: Bundle.frameworkBundle()), forCellReuseIdentifier: kReuseCellIdentifier)
         tableView.estimatedRowHeight = 130
-        tableView.rowHeight = UITableView.automaticDimension
+        tableView.rowHeight = UITableViewAutomaticDimension
     }
     override open func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         super.didRotate(from: fromInterfaceOrientation)
@@ -113,6 +113,6 @@ extension FRHighlightList: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        return UITableViewAutomaticDimension
     }
 }

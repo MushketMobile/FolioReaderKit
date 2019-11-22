@@ -141,7 +141,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         
         // Loading indicator
         let style: UIActivityIndicatorView.Style = folioReader.isNight(.white, .gray)
-        loadingView = UIActivityIndicatorView(style: style)
+        loadingView = UIActivityIndicatorView(activityIndicatorStyle: style)
         loadingView.hidesWhenStopped = true
         loadingView.startAnimating()
 
@@ -205,22 +205,22 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.decelerationRate = UIScrollView.DecelerationRate.fast
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
         enableScrollBetweenChapters(scrollEnabled: true)
         view.addSubview(collectionView)
 
         updateColors()
         NotificationCenter.default.addObserver(self, selector: #selector(refreshPageMode), name: NSNotification.Name(rawValue: "needRefreshPageMode"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
 
         // Activity Indicator
-        self.activityIndicator.style = .gray
+        self.activityIndicator.activityIndicatorViewStyle = .gray
         self.activityIndicator.hidesWhenStopped = true
         self.activityIndicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width/2, y: self.view.frame.height/2, width: 30, height: 30))
         self.activityIndicator.backgroundColor = UIColor.gray
         self.view.addSubview(self.activityIndicator)
-        self.view.bringSubviewToFront(self.activityIndicator)
+        self.view.bringSubview(toFront: self.activityIndicator)
         
         if #available(iOS 10.0, *) {
             collectionView.isPrefetchingEnabled = false
@@ -276,7 +276,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
             readerProgressManager?.clearAndUpdateIfNeeded()
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
     }
     
 
@@ -381,7 +381,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
             keyboardHeight = keyboardSize.height
             currentPage?.webView.setupNoteFrame(keyboardHeight: keyboardHeight)
         }
@@ -1540,7 +1540,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     
     open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         recentlyScrolledTimer = Timer(timeInterval:recentlyScrolledDelay, target: self, selector: #selector(FolioReaderCenter.clearRecentlyScrolled), userInfo: nil, repeats: false)
-        RunLoop.current.add(recentlyScrolledTimer, forMode: RunLoop.Mode.common)
+        RunLoop.current.add(recentlyScrolledTimer, forMode: RunLoopMode.commonModes)
         if !decelerate
         {
             let currentIndex = floor(scrollView.contentOffset.x / scrollView.bounds.size.width)
