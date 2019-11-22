@@ -9,111 +9,88 @@
 import UIKit
 
 /// Table Of Contents delegate
-@objc protocol FolioReaderChapterListDelegate: class {
+@objc protocol FolioReaderListDelegate: class {
     /**
      Notifies when the user selected some item on menu.
      */
-    func chapterList(_ chapterList: FolioReaderChapterList, didSelectRowAtIndexPath indexPath: IndexPath, withTocReference reference: FRTocReference)
+    func selectItemList(didSelectRowAtIndexPath indexPath: IndexPath, withTocReference reference: FRTocReference)
 
     /**
      Notifies when chapter list did totally dismissed.
      */
-    func chapterList(didDismissedChapterList chapterList: FolioReaderChapterList)
+    func dismissList()
 }
 
-class FolioReaderChapterList: UITableViewController {
 
-    weak var delegate: FolioReaderChapterListDelegate?
+class FolioReaderChapterList: UIViewController {
+    @IBOutlet weak var tableView: UITableView!
+    weak var delegate: FolioReaderListDelegate?
     fileprivate var tocItems = [FRTocReference]()
-    fileprivate var book: FRBook
-    fileprivate var readerConfig: FolioReaderConfig
-    fileprivate var folioReader: FolioReader
+    fileprivate var book: FRBook!
+    fileprivate var readerConfig: FolioReaderConfig!
+    fileprivate var folioReader: FolioReader!
+    @IBOutlet weak var backgroundImageView: UIImageView!
 
-    init(folioReader: FolioReader, readerConfig: FolioReaderConfig, book: FRBook, delegate: FolioReaderChapterListDelegate?) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configurateTable()
+        tocItems = book.flatTableOfContents
+        updateBackgroundImage()
+    }
+    
+    func updateBackgroundImage() {
+        if DeviceType.IS_IPAD, UIApplication.shared.statusBarOrientation.isLandscape {
+            backgroundImageView.image = #imageLiteral(resourceName: "background_image_landscape")
+        } else if DeviceType.IS_IPHONE_X {
+            backgroundImageView.image = #imageLiteral(resourceName: "background_image_X")
+        } else {
+            backgroundImageView.image = #imageLiteral(resourceName: "background_image")
+        }
+    }
+    
+    open func add(folioReader: FolioReader,
+                  readerConfig: FolioReaderConfig,
+                  book: FRBook,
+                  delegate: FolioReaderListDelegate?) {
         self.readerConfig = readerConfig
         self.folioReader = folioReader
         self.delegate = delegate
         self.book = book
-
-        super.init(style: UITableViewStyle.plain)
     }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init with coder not supported")
+    
+    private func configurateTable() {
+        self.tableView.register(UINib(nibName: "FolioReaderChapterListCell", bundle: Bundle.frameworkBundle()), forCellReuseIdentifier: kReuseCellIdentifier)
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Register cell classes
-        self.tableView.register(FolioReaderChapterListCell.self, forCellReuseIdentifier: kReuseCellIdentifier)
-        self.tableView.separatorInset = UIEdgeInsets.zero
-        self.tableView.backgroundColor = self.folioReader.isNight(self.readerConfig.nightModeMenuBackground, self.readerConfig.menuBackgroundColor)
-        self.tableView.separatorColor = self.folioReader.isNight(self.readerConfig.nightModeSeparatorColor, self.readerConfig.menuSeparatorColor)
-
-        self.tableView.rowHeight = UITableViewAutomaticDimension
-        self.tableView.estimatedRowHeight = 50
-
-        // Create TOC list
-        self.tocItems = self.book.flatTableOfContents
+    
+    override open func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        super.didRotate(from: fromInterfaceOrientation)
+        self.view.layoutIfNeeded()
     }
+}
 
-    // MARK: - Table view data source
+extension FolioReaderChapterList: UITableViewDataSource {
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tocItems.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: kReuseCellIdentifier, for: indexPath) as! FolioReaderChapterListCell
+     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: kReuseCellIdentifier) as! FolioReaderChapterListCell
+        cell.setup(withConfiguration: readerConfig)
+        let tocReference = tocItems[indexPath.row]
+        cell.indexLabel.text = tocReference.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        cell.characterLabel.text = String(format: NSLocalizedString("%d numberChapter", comment: ""), indexPath.row + 1)
 
-        cell.setup(withConfiguration: self.readerConfig)
-        let tocReference = tocItems[(indexPath as NSIndexPath).row]
-        let isSection = tocReference.children.count > 0
-
-        cell.indexLabel?.text = tocReference.title.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        // Add audio duration for Media Ovelay
-        if let resource = tocReference.resource {
-            if let mediaOverlay = resource.mediaOverlay {
-                let duration = self.book.duration(for: "#"+mediaOverlay)
-
-                if let durationFormatted = (duration != nil ? duration : "")?.clockTimeToMinutesString() {
-                    let text = cell.indexLabel?.text ?? ""
-                    cell.indexLabel?.text = text + (duration != nil ? (" - " + durationFormatted) : "")
-                }
-            }
-        }
-
-        // Mark current reading chapter
-        if
-            let currentPageNumber = self.folioReader.readerCenter?.currentPageNumber,
-            let reference = self.book.spine.spineReferences[safe: currentPageNumber - 1],
-            (tocReference.resource != nil) {
-            let resource = reference.resource
-            cell.indexLabel?.textColor = (tocReference.resource == resource ? self.readerConfig.tintColor : self.readerConfig.menuTextColor)
-        }
-
-        cell.layoutMargins = UIEdgeInsets.zero
-        cell.preservesSuperviewLayoutMargins = false
-        cell.contentView.backgroundColor = isSection ? UIColor(white: 0.7, alpha: 0.1) : UIColor.clear
-        cell.backgroundColor = UIColor.clear
         return cell
     }
+}
 
-    // MARK: - Table view delegate
+extension FolioReaderChapterList: UITableViewDelegate {
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let tocReference = tocItems[(indexPath as NSIndexPath).row]
-        delegate?.chapterList(self, didSelectRowAtIndexPath: indexPath, withTocReference: tocReference)
-        
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let tocReference = tocItems[indexPath.row]
+        delegate?.selectItemList(didSelectRowAtIndexPath: indexPath, withTocReference: tocReference)
         tableView.deselectRow(at: indexPath, animated: true)
-        dismiss { 
-            self.delegate?.chapterList(didDismissedChapterList: self)
-        }
+        dismiss { self.delegate?.dismissList() }
     }
 }

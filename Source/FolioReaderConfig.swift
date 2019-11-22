@@ -27,7 +27,7 @@ public enum FolioReaderScrollDirection: Int {
     /// The current scroll direction
     ///
     /// - Returns: Returns `UICollectionViewScrollDirection`
-    func collectionViewScrollDirection() -> UICollectionViewScrollDirection {
+    func collectionViewScrollDirection() -> UICollectionView.ScrollDirection {
         switch self {
         case .vertical, .defaultVertical:
             return .vertical
@@ -94,17 +94,21 @@ open class FolioReaderConfig: NSObject {
      Eg. A ClassBasedOnClickListener with the className `quote` and parameterName `id` with the given epub html content `<section class="quote" id="12345">` would call the given closure on a click on this section with the String `12345` as parameter.
      */
     open var classBasedOnClickListeners = [ClassBasedOnClickListener]()
+    open var bookSku: String = ""
+    open var userId: String = ""
 
     // MARK: Colors
 
     /// Base header custom TintColor
     open var tintColor = UIColor(rgba: "#6ACC50")
+//    open var tintColor = UIColor.white
 
     /// Menu background color
     open var menuBackgroundColor = UIColor.white
 
     /// Menu separator Color
     open var menuSeparatorColor = UIColor(rgba: "#D7D7D7")
+//    open var menuSeparatorColor = UIColor.red
 
     /// Menu text color
     open var menuTextColor = UIColor(rgba: "#767676")
@@ -114,10 +118,30 @@ open class FolioReaderConfig: NSObject {
 
     /// Night mode menu background color
     open var nightModeMenuBackground = UIColor(rgba: "#1E1E1E")
+//    open var nightModeMenuBackground = UIColor.white
 
     /// Night mode separator color
     open var nightModeSeparatorColor = UIColor(white: 0.5, alpha: 0.2)
+//    open var nightModeSeparatorColor = UIColor(white: 1.0, alpha: 0.2)
 
+    /// Milk mode background color
+    open var milkModeBackground = UIColor(rgba: "#E9D8BA")
+//    open var milkModeBackground = UIColor.red
+    
+    
+    /// Font size indicator color
+    open var fontSizeIndicatorOn = UIColor(rgba: "#8FBE3F")
+    open var fontSizeIndicatorOff = UIColor.white
+    
+    
+    /// Font color
+    open var fontSelected = UIColor(rgba: "#8FBE3F")
+    
+    open var bookTitle: String?
+    open var lastReadPage: Float = 0.0
+
+    
+    
     /// Media overlay or TTS selection color
     open lazy var mediaOverlayColor: UIColor! = self.tintColor
 
@@ -134,22 +158,19 @@ open class FolioReaderConfig: NSObject {
 
     /// Should hide navigation bar on user tap
     open var shouldHideNavigationOnTap = true
+    
+    /// Should hide navigation bar on user tap
+//    open var shouldHideCustomNavBarOnTap = true
 
     /// Allow sharing option, if `false` will hide all sharing icons and options
     open var allowSharing = true
 
     /// Enable TTS (Text To Speech)
     open var enableTTS = true
-    
-    /// Display book title in navbar
-    open var displayTitle = false
 
-    /// Hide the page indicator
+    // hide the page indicator
     open var hidePageIndicator = false
 
-    /// Go to saved position when open a book
-    open var loadSavedPositionForCurrentBook = true
-    
     // MARK: Quote image share
 
     /// Custom Quote logo
@@ -169,11 +190,11 @@ open class FolioReaderConfig: NSObject {
     // MARK: Localized strings
 
     /// Localizes Highlight title
-    open var localizedHighlightsTitle   = NSLocalizedString("Highlights", comment: "")
+    open var localizedHighlightsTitle   = NSLocalizedString("FilioReader.localizedHighlightsTitle", comment: "FilioReader: Highlights")
 
     /// Localizes Content title
-    open var localizedContentsTitle     = NSLocalizedString("Contents", comment: "")
-
+    open var localizedContentsTitle     = NSLocalizedString("FilioReader.localizedContentsTitle", comment: "FilioReader: Contents")
+    
     /// Use the readers `UIMenuController` which enables the highlighting etc. The default is `true`. If set to false it's possible to modify the shared `UIMenuController` for yourself. Note: This doesn't disable the text selection in the web view.
     open var useReaderMenuController    = true
 
@@ -181,36 +202,51 @@ open class FolioReaderConfig: NSObject {
     open var identifier: String?
 
     /// Localizes Highlight date format. This is a `dateFormat` from `NSDateFormatter`, so be careful 🤔
-    open var localizedHighlightsDateFormat = "MMM dd, YYYY | HH:mm"
-    open var localizedHighlightMenu = NSLocalizedString("Highlight", comment: "")
-    open var localizedDefineMenu = NSLocalizedString("Define", comment: "")
-    open var localizedPlayMenu = NSLocalizedString("Play", comment: "")
-    open var localizedPauseMenu = NSLocalizedString("Pause", comment: "")
-    open var localizedFontMenuNight = NSLocalizedString("Night", comment: "")
-    open var localizedPlayerMenuStyle = NSLocalizedString("Style", comment: "")
-    open var localizedFontMenuDay = NSLocalizedString("Day", comment: "")
-    open var localizedLayoutHorizontal = NSLocalizedString("Horizontal", comment: "")
-    open var localizedLayoutVertical = NSLocalizedString("Vertical", comment: "")
-    open var localizedReaderOnePageLeft = NSLocalizedString("1 page left", comment: "")
-    open var localizedReaderManyPagesLeft = NSLocalizedString("pages left", comment: "")
-    open var localizedReaderManyMinutes = NSLocalizedString("minutes", comment: "")
-    open var localizedReaderOneMinute = NSLocalizedString("1 minute", comment: "")
-    open var localizedReaderLessThanOneMinute = NSLocalizedString("Less than a minute", comment: "")
+    open var localizedHighlightsDateFormat = "yyyy-MM-dd HH:mm:ss"
+    open var localizedHighlightMenu = NSLocalizedString("FilioReader.localizedHighlightMenu", comment: "FilioReader: Highlight")
+    open var localizedDefineMenu = NSLocalizedString("FilioReader.localizedDefineMenu", comment: "FilioReader: Define")
+    open var localizedPlayMenu = NSLocalizedString("FilioReader.localizedPlayMenu", comment: "FilioReader: Play")
+    open var localizedPauseMenu = NSLocalizedString("FilioReader.localizedPauseMenu", comment: "FilioReader: Pause")
+    open var localizedFontMenuNight = NSLocalizedString("FilioReader.localizedFontMenuNight", comment: "FilioReader: Night")
+    open var localizedFontMenuDay = NSLocalizedString("FilioReader.localizedFontMenuDay", comment: "FilioReader: Day")
+    
+    open var localizedPlayerMenuStyle = NSLocalizedString("FilioReader.localizedPlayerMenuStyle", comment: "FilioReader: Style")
+    open var localizedCancel = NSLocalizedString("FilioReader.localizedCancel", comment: "FilioReader: Cancel")
+    open var localizedChooseExisting = NSLocalizedString("FilioReader.localizedChooseExisting", comment: "FilioReader: Choose existing")
+    open var localizedTakePhoto = NSLocalizedString("FilioReader.localizedTakePhoto", comment: "FilioReader: Take photo")
+    
+    open var localizedLayoutHorizontal = NSLocalizedString("FilioReader.Layout.localizedLayoutHorizontal", comment: "FilioReader.Layout: Horizontal")
+    open var localizedLayoutVertical = NSLocalizedString("FilioReader.Layout.localizedLayoutVertical", comment: "FilioReader.Layout: Vertical")
+    
+    open var localizedReaderOnePageLeft = NSLocalizedString("FilioReader.Reader.localizedReaderOnePageLeft", comment: "FilioReader.Reader: One Page left")
+    open var localizedReaderManyPagesLeft = NSLocalizedString("FilioReader.Reader.localizedReaderManyPagesLeft", comment: "FilioReader.Reader: Many pages left")
+    open var localizedReaderManyMinutes = NSLocalizedString("FilioReader.Reader.localizedReaderManyMinutes", comment: "FilioReader.Reader: Reader many minutes")
+    open var localizedReaderOneMinute = NSLocalizedString("FilioReader.Reader.localizedReaderOneMinute ", comment: "FilioReader.Reader: reader one minute")
+    open var localizedReaderLessThanOneMinute = NSLocalizedString("FilioReader.Reader.localizedReaderLessThanOneMinute ", comment: "FilioReader.Reader: Reader less than one minute")
+    
     open var localizedShareWebLink: URL? = nil
-    open var localizedShareChapterSubject = NSLocalizedString("Check out this chapter from", comment: "")
-    open var localizedShareHighlightSubject = NSLocalizedString("Notes from", comment: "")
-    open var localizedShareAllExcerptsFrom = NSLocalizedString("All excerpts from", comment: "")
-    open var localizedShareBy = NSLocalizedString("by", comment: "")
-    open var localizedCancel = NSLocalizedString("Cancel", comment: "")
-    open var localizedShare = NSLocalizedString("Share", comment: "")
-    open var localizedChooseExisting = NSLocalizedString("Choose existing", comment: "")
-    open var localizedTakePhoto = NSLocalizedString("Take Photo", comment: "")
-    open var localizedShareImageQuote = NSLocalizedString("Share image quote", comment: "")
-    open var localizedShareTextQuote = NSLocalizedString("Share text quote", comment: "")
-
+    open var localizedShare = NSLocalizedString("FilioReader.Share.localizedShare", comment: "FilioReader.Share: Share")
+    open var localizedShareBy = NSLocalizedString("FilioReader.Share.localizedShareBy", comment: "FilioReader.Share: By")
+    open var localizedShareChapterSubject = NSLocalizedString("FilioReader.Share.localizedShareChapterSubject", comment: "FilioReader.Share: Check out this chapter from")
+    open var localizedShareHighlightSubject = NSLocalizedString("FilioReader.Share.localizedShareHighlightSubject", comment: "FilioReader.Share: Notes from")
+    open var localizedShareAllExcerptsFrom = NSLocalizedString("FilioReader.Share.localizedShareAllExcerptsFrom", comment: "FilioReader.Share: All excerpts from")
+    open var localizedShareImageQuote = NSLocalizedString("FilioReader.Share.localizedShareImageQuote", comment: "FilioReader.Share: Share image quote")
+    open var localizedShareTextQuote = NSLocalizedString("FilioReader.Share.localizedShareTextQuote", comment: "FilioReader.Share: Share text quote")
+    
+    struct Localization {
+        struct ReaderFontsMenu {
+            static let settings = NSLocalizedString("FilioReader.ReaderFontsMenu.settings", comment: "FilioReader.ReaderFontsMenu: title menu 'Book Settings'")
+            static let fontTitle = NSLocalizedString("FilioReader.ReaderFontsMenu.fontTitle", comment: "FilioReader.ReaderFontsMenu: title fonts menu 'Font'")
+            static let fontDavid = NSLocalizedString("FilioReader.ReaderFontsMenu.fontDavid", comment: "FilioReader.ReaderFontsMenu: name font menu 'David'")
+            static let fontFrankRuhel = NSLocalizedString("FilioReader.ReaderFontsMenu.fontFrankRuhel", comment: "FilioReader.ReaderFontsMenu: name font menu 'Frank Ruhel'")
+            static let fontHadasim = NSLocalizedString("FilioReader.ReaderFontsMenu.fontHadasim", comment: "FilioReader.ReaderFontsMenu: name font menu 'Hadasim'")
+            static let fontShofar = NSLocalizedString("FilioReader.ReaderFontsMenu.fontShofar", comment: "FilioReader.ReaderFontsMenu: name font menu 'Shofar'")
+            static let letterA = NSLocalizedString("FilioReader.ReaderFontsMenu.letterA", comment: "FilioReader.ReaderFontsMenu: power of light name title letter 'A'")
+        }
+    }
+    
     public convenience init(withIdentifier identifier: String) {
         self.init()
-
         self.identifier = identifier
     }
 

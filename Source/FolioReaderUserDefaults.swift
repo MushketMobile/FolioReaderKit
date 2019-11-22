@@ -98,6 +98,7 @@ extension FolioReaderUserDefaults {
 
     internal func set(_ value: Any?, forKey key: String) {
         if (self.useStandardUserDefaultsDirectly == true) {
+            print(key)
             UserDefaults.standard.set(value, forKey: key)
         } else {
             self.userDefaults[key] = value

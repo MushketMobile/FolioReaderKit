@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Alef-Regular.ttf">
+            <string>Alef-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="com.folioreader.Cell.ReuseIdentifier" rowHeight="124" id="llw-TS-7p4" customClass="FRHighlightListCell" customModule="FolioReaderKit">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="125"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="llw-TS-7p4" id="8Ft-p5-oP0">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="124.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ruU-GT-h1k">
+                        <rect key="frame" x="91" y="32" width="259" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="qZ2-OS-Hbj"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Alef-Regular" family="Alef" pointSize="18"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AXY-yA-Vo7">
+                        <rect key="frame" x="308" y="7" width="42" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="1yy-0u-UV2"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Alef-Regular" family="Alef" pointSize="18"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nh0-pd-MUd">
+                        <rect key="frame" x="25" y="29" width="16" height="27"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="XBs-Ay-u02"/>
+                            <constraint firstAttribute="height" constant="27" id="xvf-cH-15x"/>
+                        </constraints>
+                        <state key="normal" image="bin"/>
+                        <connections>
+                            <action selector="deleteHighlight:" destination="llw-TS-7p4" eventType="touchUpInside" id="9K9-1F-hA7"/>
+                        </connections>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="COv-Yd-0bN">
+                        <rect key="frame" x="85" y="57" width="265" height="25"/>
+                        <fontDescription key="fontDescription" name="Alef-Regular" family="Alef" pointSize="18"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ABG-T7-cqa">
+                        <rect key="frame" x="85" y="60.5" width="265" height="24.5"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24.5" id="iAd-79-1HX"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Alef-Regular" family="Alef" pointSize="18"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y4U-tr-tAv">
+                        <rect key="frame" x="25" y="1" width="325" height="1"/>
+                        <color key="backgroundColor" red="0.792156862745098" green="0.8784313725490196" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="G39-RU-nYC"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="COv-Yd-0bN" secondAttribute="trailing" constant="25" id="647-Yd-aPf"/>
+                    <constraint firstItem="ruU-GT-h1k" firstAttribute="top" secondItem="AXY-yA-Vo7" secondAttribute="bottom" constant="4" id="6gG-2Q-fxc"/>
+                    <constraint firstItem="ABG-T7-cqa" firstAttribute="leading" secondItem="8Ft-p5-oP0" secondAttribute="leading" constant="85" id="CCN-Xw-9B2"/>
+                    <constraint firstAttribute="trailing" secondItem="AXY-yA-Vo7" secondAttribute="trailing" constant="25" id="D1m-U4-IJF"/>
+                    <constraint firstAttribute="trailing" secondItem="ruU-GT-h1k" secondAttribute="trailing" constant="25" id="DCs-Nd-XXc" customClass="DeviceLayoutConstraint" customModule="DeviceLayout">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch4">
+                                <real key="value" value="15"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch4_7">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch5_5">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch9_7">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch12_9">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </constraint>
+                    <constraint firstAttribute="trailing" secondItem="ABG-T7-cqa" secondAttribute="trailing" constant="25" id="FFI-jA-OYh"/>
+                    <constraint firstAttribute="bottom" secondItem="ABG-T7-cqa" secondAttribute="bottom" id="I7Z-hT-5UA"/>
+                    <constraint firstItem="Y4U-tr-tAv" firstAttribute="leading" secondItem="8Ft-p5-oP0" secondAttribute="leading" constant="25" id="Kya-hu-3Rh"/>
+                    <constraint firstItem="COv-Yd-0bN" firstAttribute="top" secondItem="8Ft-p5-oP0" secondAttribute="top" constant="57" id="LKa-Xq-blr"/>
+                    <constraint firstItem="Nh0-pd-MUd" firstAttribute="centerY" secondItem="8Ft-p5-oP0" secondAttribute="centerY" id="P0Y-wV-XOX"/>
+                    <constraint firstItem="AXY-yA-Vo7" firstAttribute="top" secondItem="8Ft-p5-oP0" secondAttribute="top" constant="7" id="PwH-bo-QWy"/>
+                    <constraint firstItem="Y4U-tr-tAv" firstAttribute="top" secondItem="8Ft-p5-oP0" secondAttribute="top" constant="1" id="Rae-Fh-T6p"/>
+                    <constraint firstItem="Nh0-pd-MUd" firstAttribute="leading" secondItem="8Ft-p5-oP0" secondAttribute="leading" constant="25" id="Tpb-yO-F3i" customClass="DeviceLayoutConstraint" customModule="DeviceLayout">
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch4">
+                                <real key="value" value="15"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch4_7">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch5_5">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch9_7">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="inch12_9">
+                                <real key="value" value="25"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </constraint>
+                    <constraint firstItem="ruU-GT-h1k" firstAttribute="leading" secondItem="Nh0-pd-MUd" secondAttribute="trailing" constant="50" id="ata-Qf-ARc"/>
+                    <constraint firstItem="ruU-GT-h1k" firstAttribute="centerY" secondItem="8Ft-p5-oP0" secondAttribute="centerY" id="dCc-u4-kiS"/>
+                    <constraint firstAttribute="bottom" secondItem="COv-Yd-0bN" secondAttribute="bottom" constant="3" id="qLH-T2-eF8"/>
+                    <constraint firstAttribute="trailing" secondItem="Y4U-tr-tAv" secondAttribute="trailing" constant="25" id="sjQ-TP-PYZ"/>
+                    <constraint firstItem="COv-Yd-0bN" firstAttribute="leading" secondItem="8Ft-p5-oP0" secondAttribute="leading" constant="85" id="y0i-Yl-5Ji"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="characterLabel" destination="AXY-yA-Vo7" id="dw4-Oa-NWg"/>
+                <outlet property="dateText" destination="ruU-GT-h1k" id="39P-vA-KRM"/>
+                <outlet property="highlightText" destination="COv-Yd-0bN" id="nhg-jR-VaM"/>
+                <outlet property="noteText" destination="ABG-T7-cqa" id="VNc-H4-Bdd"/>
+            </connections>
+            <point key="canvasLocation" x="34.5" y="-79.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="bin" width="12" height="20"/>
+    </resources>
+</document>

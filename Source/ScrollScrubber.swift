@@ -47,7 +47,7 @@ enum ScrollDirection: Int {
 }
 
 class ScrollScrubber: NSObject, UIScrollViewDelegate {
-    weak var delegate: FolioReaderCenter?
+    weak var delegate: FolioReaderCenter!
     var showSpeed = 0.6
     var hideSpeed = 0.6
     var hideDelay = 1.0
@@ -86,14 +86,14 @@ class ScrollScrubber: NSObject, UIScrollViewDelegate {
 
         slider = UISlider()
         slider.layer.anchorPoint = CGPoint(x: 0, y: 0)
-        slider.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
+        slider.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_2))
         slider.alpha = 0
         self.reloadColors()
 
         // less obtrusive knob and fixes jump: http://stackoverflow.com/a/22301039/484780
         let thumbImg = UIImage(readerImageNamed: "knob")
         let thumbImgColor = thumbImg?.imageTintColor(readerConfig.tintColor)?.withRenderingMode(.alwaysOriginal)
-        slider.setThumbImage(thumbImgColor, for: UIControlState())
+        slider.setThumbImage(thumbImgColor, for: UIControl.State())
         slider.setThumbImage(thumbImgColor, for: .selected)
         slider.setThumbImage(thumbImgColor, for: .highlighted)
 
@@ -202,7 +202,7 @@ class ScrollScrubber: NSObject, UIScrollViewDelegate {
 
         if (slider.alpha > 0) {
             self.show()
-        } else if delegate?.currentPage != nil && scrollStart != nil {
+        } else if delegate.currentPage != nil && scrollStart != nil {
             scrollDelta = scrollView.contentOffset.forDirection(withConfiguration: readerConfig) - scrollStart
 
             guard let pageHeight = folioReader.readerCenter?.pageHeight,
@@ -221,7 +221,7 @@ class ScrollScrubber: NSObject, UIScrollViewDelegate {
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollDeltaTimer = Timer(timeInterval:0.5, target: self, selector: #selector(ScrollScrubber.resetScrollDelta), userInfo: nil, repeats: false)
-        RunLoop.current.add(scrollDeltaTimer, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(scrollDeltaTimer, forMode: RunLoop.Mode.common)
     }
 
     @objc func resetScrollDelta() {
@@ -241,23 +241,23 @@ class ScrollScrubber: NSObject, UIScrollViewDelegate {
     // MARK: - utility methods
 
     fileprivate func scrollView() -> UIScrollView? {
-        return delegate?.currentPage?.webView?.scrollView
+        return delegate.currentPage?.webView.scrollView
     }
 
     fileprivate func height() -> CGFloat {
-        guard let currentPage = delegate?.currentPage,
-            let pageHeight = folioReader.readerCenter?.pageHeight,
-            let webView = currentPage.webView else {
+        guard
+            let currentPage = delegate.currentPage,
+            let pageHeight = folioReader.readerCenter?.pageHeight else {
                 return 0
         }
 
-        return webView.scrollView.contentSize.height - pageHeight + 44
+        return (currentPage.webView.scrollView.contentSize.height - pageHeight + 44)
     }
     
     fileprivate func scrollTop() -> CGFloat {
-        guard let currentPage = delegate?.currentPage, let webView = currentPage.webView else {
+        guard let currentPage = delegate.currentPage else {
             return 0
         }
-        return webView.scrollView.contentOffset.forDirection(withConfiguration: readerConfig)
+        return currentPage.webView.scrollView.contentOffset.forDirection(withConfiguration: readerConfig)
     }
 }

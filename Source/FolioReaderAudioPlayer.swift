@@ -42,7 +42,11 @@ open class FolioReaderAudioPlayer: NSObject {
 
         // this is needed to the audio can play even when the "silent/vibrate" toggle is on
         let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(AVAudioSessionCategoryPlayback)
+        if #available(iOS 10.0, *) {
+            try? session.setCategory(AVAudioSession.Category.playback, mode: .default, options: [])
+        } else {
+            // Fallback on earlier versions
+        }
         try? session.setActive(true)
 
         self.updateNowPlayingInfo()
@@ -155,9 +159,9 @@ open class FolioReaderAudioPlayer: NSObject {
     }
 
     @objc func play() {
-        if book.hasAudio {
+        if (self.book.hasAudio() == true) {
             guard let currentPage = self.folioReader.readerCenter?.currentPage else { return }
-            currentPage.webView?.js("playAudio()")
+            currentPage.webView.js("playAudio()")
         } else {
             self.readCurrentSentence()
         }
@@ -178,7 +182,7 @@ open class FolioReaderAudioPlayer: NSObject {
 
         self.stop()
 
-        let smilFile = book.smilFile(forHref: href)
+        let smilFile = self.book.smilFileForHref(href)
 
         // if no smil file for this href and the same href is being requested, we've hit the end. stop playing
         if smilFile == nil && currentHref != nil && href == currentHref {
@@ -308,7 +312,7 @@ open class FolioReaderAudioPlayer: NSObject {
      */
     fileprivate func nextAudioFragment() -> FRSmilElement? {
 
-        guard let smilFile = book.smilFile(forHref: currentHref) else {
+        guard let smilFile = self.book.smilFileForHref(currentHref) else {
             return nil
         }
 
@@ -362,8 +366,8 @@ open class FolioReaderAudioPlayer: NSObject {
                 return
         }
 
-        let playbackActiveClass = book.playbackActiveClass
-        guard let sentence = currentPage.webView?.js("getSentenceWithIndex('\(playbackActiveClass)')") else {
+        let playbackActiveClass = self.book.playbackActiveClass()
+        guard let sentence = currentPage.webView.js("getSentenceWithIndex('\(playbackActiveClass)')") else {
             if (readerCenter.isLastPage() == true) {
                 self.stop()
             } else {
@@ -391,7 +395,7 @@ open class FolioReaderAudioPlayer: NSObject {
             if synthesizer.isSpeaking {
                 stopSynthesizer(immediate: false, completion: {
                     if let currentPage = self.folioReader.readerCenter?.currentPage {
-                        currentPage.webView?.js("resetCurrentSentenceIndex()")
+                        currentPage.webView.js("resetCurrentSentenceIndex()")
                     }
                     self.speakSentence()
                 })
@@ -406,7 +410,7 @@ open class FolioReaderAudioPlayer: NSObject {
     fileprivate func startPlayerTimer() {
         // we must add the timer in this mode in order for it to continue working even when the user is scrolling a webview
         playingTimer = Timer(timeInterval: 0.01, target: self, selector: #selector(playerTimerObserver), userInfo: nil, repeats: true)
-        RunLoop.current.add(playingTimer, forMode: RunLoopMode.commonModes)
+        RunLoop.current.add(playingTimer, forMode: RunLoop.Mode.common)
     }
 
     fileprivate func stopPlayerTimer() {
@@ -441,7 +445,7 @@ open class FolioReaderAudioPlayer: NSObject {
         }
 
         // Get book title
-        if let title = self.book.title {
+        if let title = self.book.title() {
             songInfo[MPMediaItemPropertyAlbumTitle] = title as AnyObject?
         }
 
@@ -532,4 +536,9 @@ extension FolioReaderAudioPlayer: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         _playFragment(self.nextAudioFragment())
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
 }

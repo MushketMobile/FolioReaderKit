@@ -31,6 +31,11 @@ function getHTML() {
     return document.documentElement.outerHTML;
 }
 
+// Get HTML Body
+function getHTMLBody() {
+    return document.body.outerHTML;
+}
+
 // Class manipulation
 function hasClass(ele,cls) {
   return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
@@ -57,15 +62,39 @@ function setFontName(cls) {
     addClass(elm, cls);
 }
 
+// Set line-height
+function setLineHeight(cls) {
+    var elm = document.documentElement;
+    removeClass(elm, "lineHeightOne");
+    removeClass(elm, "lineHeightTwo");
+    removeClass(elm, "lineHeightThree");
+    addClass(elm, cls);
+}
+
 // Toggle night mode
 function nightMode(enable) {
     var elm = document.documentElement;
     if(enable) {
+        removeClass(elm, "milkMode");
         addClass(elm, "nightMode");
     } else {
         removeClass(elm, "nightMode");
+        removeClass(elm, "milkMode");
     }
 }
+
+// Toggle milk mode
+function milkMode(enable) {
+    var elm = document.documentElement;
+    if(enable) {
+        removeClass(elm, "nightMode");
+        addClass(elm, "milkMode");
+    } else {
+        removeClass(elm, "milkMode");
+        removeClass(elm, "nightMode");
+    }
+}
+
 
 // Set font size
 function setFontSize(cls) {
@@ -75,6 +104,10 @@ function setFontSize(cls) {
     removeClass(elm, "textSizeThree");
     removeClass(elm, "textSizeFour");
     removeClass(elm, "textSizeFive");
+    removeClass(elm, "textSizeSix");
+    removeClass(elm, "textSizeSeven");
+    removeClass(elm, "textSizeEight");
+    removeClass(elm, "textSizeNine");
     addClass(elm, cls);
 }
 
@@ -179,6 +212,17 @@ var getAnchorOffset = function(target, horizontal) {
     }
     
     return elem.offsetTop;
+}
+
+function getRectElement(id) {
+    var elem = document.getElementById(id);
+    var rect = elem.getBoundingClientRect();
+    var params = [];
+    var offsetX = document.body.clientWidth * Math.floor(elem.offsetTop / window.innerHeight);
+    params.push({rect: rect, offset: elem.offsetTop});
+    
+    return JSON.stringify(params);
+//    return "{{" + rect.left + "," + rect.top + "}, {" + rect.width + "," + rect.height + "}}";
 }
 
 function findElementWithID(node) {
@@ -615,3 +659,119 @@ var onClassBasedListenerClick = function(schemeName, attributeContent) {
 	// Set the custom link URL to the event
 	window.location = schemeName + "://" + attributeContent + positionParameterString;
 }
+
+var uiWebview_SearchResultCount = 0;
+
+/*!
+ @method     uiWebview_HighlightAllOccurencesOfStringForElement
+ @abstract   // helper function, recursively searches in elements and their child nodes
+ @discussion // helper function, recursively searches in elements and their child nodes
+ 
+ element    - HTML elements
+ keyword    - string to search
+ */
+
+function uiWebview_HighlightAllOccurencesOfStringForElement(element,keyword) {
+    if (element) {
+        if (element.nodeType == 3) {        // Text node
+            
+            var count = 0;
+            var elementTmp = element;
+            while (true) {
+                var value = elementTmp.nodeValue;  // Search for keyword in text node
+                var idx = value.toLowerCase().indexOf(keyword);
+                
+                if (idx < 0) break;
+                
+                count++;
+                elementTmp = document.createTextNode(value.substr(idx+keyword.length));
+            }
+            
+            uiWebview_SearchResultCount += count;
+            
+            var index = uiWebview_SearchResultCount;
+            while (true) {
+                var value = element.nodeValue;  // Search for keyword in text node
+                var idx = value.toLowerCase().indexOf(keyword);
+                
+                if (idx < 0) break;             // not found, abort
+                
+                //we create a SPAN element for every parts of matched keywords
+                var span = document.createElement("span");
+                var text = document.createTextNode(value.substr(idx,keyword.length));
+                span.appendChild(text);
+                
+                span.setAttribute("class","uiWebviewHighlight");
+                span.style.backgroundColor="yellow";
+                span.style.color="black";
+                
+                index--;
+                span.setAttribute("id", "SEARCH WORD"+(index));
+                //span.setAttribute("id", "SEARCH WORD"+uiWebview_SearchResultCount);
+                
+                //element.parentNode.setAttribute("id", "SEARCH WORD"+uiWebview_SearchResultCount);
+                
+                //uiWebview_SearchResultCount++;    // update the counter
+                
+                text = document.createTextNode(value.substr(idx+keyword.length));
+                element.deleteData(idx, value.length - idx);
+                
+                var next = element.nextSibling;
+                //alert(element.parentNode);
+                element.parentNode.insertBefore(span, next);
+                element.parentNode.insertBefore(text, next);
+                element = text;
+            }
+            
+            
+        } else if (element.nodeType == 1) { // Element node
+            if (element.style.display != "none" && element.nodeName.toLowerCase() != 'select') {
+                for (var i=element.childNodes.length-1; i>=0; i--) {
+                    uiWebview_HighlightAllOccurencesOfStringForElement(element.childNodes[i],keyword);
+                }
+            }
+        }
+    }
+}
+
+// the main entry point to start the search
+function uiWebview_HighlightAllOccurencesOfString(keyword) {
+    uiWebview_RemoveAllHighlights();
+    uiWebview_HighlightAllOccurencesOfStringForElement(document.body, keyword.toLowerCase());
+}
+
+// helper function, recursively removes the highlights in elements and their childs
+function uiWebview_RemoveAllHighlightsForElement(element) {
+    if (element) {
+        if (element.nodeType == 1) {
+            if (element.getAttribute("class") == "uiWebviewHighlight") {
+                var text = element.removeChild(element.firstChild);
+                element.parentNode.insertBefore(text,element);
+                element.parentNode.removeChild(element);
+                return true;
+            } else {
+                var normalize = false;
+                for (var i=element.childNodes.length-1; i>=0; i--) {
+                    if (uiWebview_RemoveAllHighlightsForElement(element.childNodes[i])) {
+                        normalize = true;
+                    }
+                }
+                if (normalize) {
+                    element.normalize();
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function uiWebview_RemoveAllHighlights() {
+    uiWebview_SearchResultCount = 0;
+    uiWebview_RemoveAllHighlightsForElement(document.body);
+}
+
+function uiWebview_ScrollTo(idx) {
+    var scrollTo = document.getElementById("SEARCH WORD" + idx);
+    if (scrollTo) scrollTo.scrollIntoView();
+}
+

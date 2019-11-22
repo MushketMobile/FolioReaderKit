@@ -1,0 +1,182 @@
+//
+//  Localizable(Hebrew).swift
+//  FolioReader
+//
+//  Created by Oleksandr Nesynov on 18/9/17.
+//  Copyright © 2017 MushketMobile. All rights reserved.
+//
+
+/* FilioReader.FolioReaderBookmarkList.numberChapter: label number chapter */
+"%d numberChapter" = "%d פרק";
+"searching" = "חיפוש מתבצע";
+"no_search_result" = "לא נמצאו תוצאות חיפוש";
+
+"%d pages" = "%d עמודים";
+
+/* FilioReader.FolioReaderChapterList.numberChapter: label number chapter */
+"%d numberChapter" = "%d פרק";
+
+/* FilioReader.FolioReaderSearch.numberChapter: label number chapter */
+"FilioReader.FolioReaderSearch.numberChapter" = "%d פרק";
+
+/* FilioReader.FolioReaderSearch: title 'Search result' */
+"FilioReader.FolioReaderSearch.searchResult" = "תוצאות חיפוש";
+
+/* FilioReader.FRHighlightList.numberChapter: label number chapter */
+"%d numberChapter" = "%d פרק";
+
+/* Common: Name of app for alert */
+"Alert.Common.getBooks" = "GetBooks";
+
+/* Alert.Common: message 'No internet connecton, try again latter' */
+"Alert.Common.noInternetConnecton" = "המכשיר אינו מחובר לאינטרנט";
+
+/* Alert.Common: Button is 'Ok' */
+"Alert.Common.ok" = "בסדר";
+
+/* Alert.Common: Button is 'Other' */
+"Alert.Common.other" = "אַחֵר";
+
+/* Alert.Common: Button is 'Yes' */
+"Alert.Common.yes" = "כן";
+
+/* Tutorial screen: question in the alert 'Don't show tutorial screens again?' */
+"Alert.Tutorial.again" = "לא להציג מסכים אלו בעתיד";
+
+/* Alert.Common: Button is 'Dismiss' */
+"Alert.Common.dismiss" = "";
+
+/* Alert.Common: Title 'Error' */
+"Alert.Common.error" = "";
+
+/* Alert.Common: Button is 'No' */
+"Alert.Common.no" = "";
+
+/* Alert.Settings.chooseEpub: when you upload a book */
+"Alert.Library.chooseEpub: you need to shoose epub file" = "";
+
+/* Alert.Tutorial: Title of the alert 'Tutorial Screen' */
+"Alert.Tutorial.tutorial" = "";
+
+/* Error.Server: error message 'Oops, something happened with server' */
+"Error.Server.nil" = "";
+
+/* LeftMenu.About: title name label about */
+"LeftMenu.About.about" = "אודות";
+
+/* LeftMenu: About application */
+"LeftMenu.Cell.about" = "אודות";
+
+/* LeftMenu: Guide to questions and answers, help */
+"LeftMenu.Cell.directory" = "מדריך";
+
+/* LeftMenu: User tutorial of interface */
+"LeftMenu.Cell.help" = "עזרה";
+
+/* LeftMenu: History of rented books */
+"LeftMenu.Cell.rentalHistory" = "היסטוריה";
+
+/* LeftMenu: Sign in as a different user */
+"LeftMenu.Cell.signOut" = "כניסה כמשתמש אחר";
+
+/* LeftMenu: Sign In */
+"LeftMenu.Cell.signIn" =  "כניסה";
+
+/* LeftMenu: Terms of Service and Privacy */
+"LeftMenu.Cell.termPrivacy" = "תנאי שירות ופרטיות";
+
+/* LeftMenu.DirectoryBooks: title name label application */
+"LeftMenu.DirectoryBooks.application" = "אפליקציה";
+
+/* LeftMenu.DirectorySegmentView: name button help */
+"LeftMenu.DirectorySegmentView.help" = "עזרה";
+
+/* LeftMenu.DirectorySegmentView: name button questions and answers */
+"LeftMenu.DirectorySegmentView.questionsAndAnswers" = "שאלות ותשובות";
+
+/* LeftMenu.TermPrivacySegmentView: name button privacy policy */
+"LeftMenu.TermPrivacySegmentView.privacyPolicy" = "מדיניות פרטיות";
+
+/* LeftMenu.DirectorySegmentView: name button terms of service */
+"LeftMenu.TermPrivacySegmentView.termsOfService" = "תנאי השירות";
+
+/* Library screen: button name 'Catalog' */
+"Library.NavigationBar.catalog" = "קטלוג";
+
+/* Library screen: button name 'Library' */
+"Library.NavigationBar.library" = "הספרים שלי";
+
+/* PopUp: Settings reset to default */
+"PopUp.defaults" = "אפס הגדרות לברירת מחדל";
+
+/* PopUp.Logout: name button 'cancel?' */
+"PopUp.Logout.cancel" = "ביטול";
+
+/* PopUp.Logout: name button 'log out?' */
+"PopUp.Logout.logout" = "לצאת";
+
+/* PopUp.Logout: message 'Log out?' */
+"PopUp.Logout.message" = "לצאת מהחשבון?";
+
+/* PopUp: name title 'Cancel' */
+"PopUp.Delete.cancel" = "ביטול";
+
+/* PopUp: name title 'התיקייה שבחרת תימחק מהמכיר,\n\nאך כל הספרים יהיו זמינים להוספה חוזרת מתוך "%@".\nהאם למחוק אותה?' */
+"PopUp.Delete.folder" = "התיקייה שבחרת תימחק מהמכשיר,\nאך כל הספרים יהיו זמינים להוספה חוזרת מתוך \"%@\".\nהאם למחוק אותה?";
+
+/* PopUp: name title 'Delete' */
+"PopUp.Delete.delete" = "למחוק";
+
+/* PopUp: 'The selected books will be deleted from your device but will continue to be accessible in the cloud. Do you want to continue deleting?' */
+"PopUp.Delete.message" = "הספרים שנבחרו יימחקו ממכשירך אך ימשיכו להיות נגישים בענן. האם ברצונך להמשיך במחיקה?";
+
+/* PopUp: 'The message appears when there is no internet' */
+"PopUp.noInternet" = "המכשיר אינו מחובר לאינטרנט";
+
+/* PopUp: 'I agree to receive updates on new books, promotions and system announcements' */
+"PopUp.notificationSettings" = "אני מסכימ/ה לקבל עדכונים על ספרים חדשים, מבצעים והודעות מערכת";
+
+/* PopUp: Settings reset to default */
+"PopUp.settingsResetToDefault" = "אפס הגדרות לברירת מחדל";
+
+/* RightMenu: Book sorting option ‘Recently added’ */
+"RightMenu.Cell.addDate" = "חדשים";
+
+/* RightMenu: Book sorting option: ‘Author's name’ */
+"RightMenu.Cell.author" = "שם סופר";
+
+/* RightMenu: Book sorting option: ‘Book title’ */
+"RightMenu.Cell.bookTitle" = "שם ספר";
+
+/* RightMenu: Delete book */
+"RightMenu.Cell.deleteBook" = "מחיקת ספרים";
+
+/* RightMenu: Book sorting option: ‘Recently read’ */
+"RightMenu.Cell.readDate" = "נקראו לאחרונה";
+
+/* RightMenu: Application settings */
+"RightMenu.Cell.screenSettings" = "תצוגה";
+
+/* RightMenu: Book sorting parameter */
+"RightMenu.Cell.sortParameter" = "סדר לפי:";
+
+/* RightMenu.Settings: name button 'Scan and import EPUB books in your device folders' */
+"RightMenu.Settings.importLocalBooks" = "סרוק וייבא ספרי EPUB הנמצאים  בתיקיות מכשירך";
+
+/* RightMenu.Settings: title label 'settings' */
+"RightMenu.Settings.settings" = "הגדרות";
+
+/* RightMenu.Settings: name button 'settings reset to default' */
+"RightMenu.Settings.settingsResetToDefault" = "אפס הגדרות לברירת מחדל";
+
+"FilioReader.ReaderFontsMenu.settings" = "הגדרות קריאה";
+"FilioReader.ReaderFontsMenu.fontTitle" = "גופן";
+"FilioReader.ReaderFontsMenu.fontDavid" = "David";
+"FilioReader.ReaderFontsMenu.fontFrankRuhel" = "Frank Ruhel";
+"FilioReader.ReaderFontsMenu.fontHadasim" = "Hadasim";
+"FilioReader.ReaderFontsMenu.fontShofar" = "Shofar";
+"FilioReader.ReaderFontsMenu.letterA" = "A";
+"FilioReader.ReaderNote.Exit" = "ביטול";
+"FilioReader.ReaderNote.Save" = "שמירה";
+"FilioReader.ReaderNote.cancel" = "ביטול";
+

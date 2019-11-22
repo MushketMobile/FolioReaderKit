@@ -19,36 +19,40 @@ internal let kCurrentHighlightStyle = "com.folioreader.kCurrentHighlightStyle"
 internal let kCurrentMediaOverlayStyle = "com.folioreader.kMediaOverlayStyle"
 internal let kCurrentScrollDirection = "com.folioreader.kCurrentScrollDirection"
 internal let kNightMode = "com.folioreader.kNightMode"
+internal let kMode = "com.folioreader.kMode"
 internal let kCurrentTOCMenu = "com.folioreader.kCurrentTOCMenu"
-internal let kHighlightRange = 30
+internal let kHighlightRange = 20
 internal let kReuseCellIdentifier = "com.folioreader.Cell.ReuseIdentifier"
+internal let kCurrentLineHeight = "kCurrentLineHeight"
 
-public enum FolioReaderError: Error, LocalizedError {
-    case bookNotAvailable
-    case errorInContainer
-    case errorInOpf
-    case authorNameNotAvailable
-    case coverNotAvailable
-    case invalidImage(path: String)
-    case titleNotAvailable
-    case fullPathEmpty
+/*** DISPLAY MODE ***/
+internal let kDisplayMode = "com.folioreader.displayMode"
 
-    public var errorDescription: String? {
-        switch self {
-        case .bookNotAvailable:
+
+public struct FolioReaderError: Error {
+    enum ErrorKind {
+        case BookNotAvailable
+        case ErrorInContainer
+        case ErrorInOpf
+        case AuthorNameNotAvailable
+        case CoverNotAvailable
+        case TitleNotAvailable
+    }
+
+    let kind: ErrorKind
+
+    var localizedDescription: String {
+        switch self.kind {
+        case .BookNotAvailable:
             return "Book not found"
-        case .errorInContainer, .errorInOpf:
+        case .ErrorInContainer, .ErrorInOpf:
             return "Invalid book format"
-        case .authorNameNotAvailable:
+        case .AuthorNameNotAvailable:
             return "Author name not available"
-        case .coverNotAvailable:
+        case .CoverNotAvailable:
             return "Cover image not available"
-        case let .invalidImage(path):
-            return "Invalid image at path: " + path
-        case .titleNotAvailable:
+        case .TitleNotAvailable:
             return "Book title not available"
-        case .fullPathEmpty:
-            return "Book corrupted"
         }
     }
 }
@@ -72,21 +76,37 @@ public enum MediaOverlayStyle: Int {
     }
 }
 
+/*** DISPLAY MODE ***/
+public enum DisplayMode: Int {
+    case day
+    case milk
+    case night
+    
+    init() {
+        self = .day
+    }
+    
+    func className() -> String {
+        return "displayMode\(self.rawValue)"
+    }
+}
+
+
 /// FolioReader actions delegate
 @objc public protocol FolioReaderDelegate: class {
-    
+
     /// Did finished loading book.
     ///
     /// - Parameters:
     ///   - folioReader: The FolioReader instance
     ///   - book: The Book instance
     @objc optional func folioReader(_ folioReader: FolioReader, didFinishedLoading book: FRBook)
-    
+
     /// Called when reader did closed.
     ///
     /// - Parameter folioReader: The FolioReader instance
     @objc optional func folioReaderDidClose(_ folioReader: FolioReader)
-    
+
     /// Called when reader did closed.
     @available(*, deprecated, message: "Use 'folioReaderDidClose(_ folioReader: FolioReader)' instead.")
     @objc optional func folioReaderDidClosed()
@@ -106,8 +126,8 @@ open class FolioReader: NSObject {
 
     /// FolioReaderDelegate
     open weak var delegate: FolioReaderDelegate?
-    
-    open weak var readerContainer: FolioReaderContainer?
+
+    open var readerContainer: FolioReaderContainer?
     open weak var readerAudioPlayer: FolioReaderAudioPlayer?
     open weak var readerCenter: FolioReaderCenter? {
         return self.readerContainer?.centerViewController
@@ -121,29 +141,35 @@ open class FolioReader: NSObject {
 
     /// Check if layout needs to change to fit Right To Left
     var needsRTLChange: Bool {
-        return (self.readerContainer?.book.spine.isRtl == true && self.readerContainer?.readerConfig.scrollDirection == .horizontal)
+        return true
+//        return (self.readerContainer?.book.spine.isRtl == true && self.readerContainer?.readerConfig.scrollDirection == .horizontal)
     }
 
-    func isNight<T>(_ f: T, _ l: T) -> T {
+    public func isNight<T>(_ f: T, _ l: T) -> T {
         return (self.nightMode == true ? f : l)
     }
 
+/*** DISPLAY MODE ***/
+    public func isMilk<T>(_ f: T, _ l: T) -> T {
+        return (self.milkMode == true ? f : l)
+    }
+    
     /// UserDefault for the current ePub file.
-    fileprivate var defaults: FolioReaderUserDefaults {
+    var defaults: FolioReaderUserDefaults {
         return FolioReaderUserDefaults(withIdentifier: self.readerContainer?.readerConfig.identifier)
     }
 
     // Add necessary observers
     fileprivate func addObservers() {
         removeObservers()
-        NotificationCenter.default.addObserver(self, selector: #selector(saveReaderState), name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(saveReaderState), name: .UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveReaderState), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveReaderState), name: UIApplication.willTerminateNotification, object: nil)
     }
 
     /// Remove necessary observers
     fileprivate func removeObservers() {
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIApplicationWillTerminate, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
     }
 }
 
@@ -156,16 +182,18 @@ extension FolioReader {
     /// - Parameters:
     ///   - parentViewController: View Controller that will present the reader container.
     ///   - epubPath: String representing the path on the disk of the ePub file. Must not be nil nor empty string.
-	///   - unzipPath: Path to unzip the compressed epub.
     ///   - config: FolioReader configuration.
     ///   - shouldRemoveEpub: Boolean to remove the epub or not. Default true.
     ///   - animated: Pass true to animate the presentation; otherwise, pass false.
-    open func presentReader(parentViewController: UIViewController, withEpubPath epubPath: String, unzipPath: String? = nil, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = true, animated:
+    open func presentReader(parentViewController: UIViewController, withEpubPath epubPath: String, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = false, animated:
         Bool = true) {
-        let readerContainer = FolioReaderContainer(withConfig: config, folioReader: self, epubPath: epubPath, unzipPath: unzipPath, removeEpub: shouldRemoveEpub)
+        var readerContainer = FolioReaderContainer(withConfig: config, folioReader: self, epubPath: epubPath, removeEpub: shouldRemoveEpub)
         self.readerContainer = readerContainer
         parentViewController.present(readerContainer, animated: animated, completion: nil)
         addObservers()
+
+        // Set the shared instance to support old version.
+        FolioReader.shared = self
     }
 }
 
@@ -177,23 +205,73 @@ extension FolioReader {
         self.defaults.register(defaults: defaults)
     }
 
-    /// Check if current theme is Night mode
     open var nightMode: Bool {
         get { return self.defaults.bool(forKey: kNightMode) }
         set (value) {
             self.defaults.set(value, forKey: kNightMode)
-
-            if let readerCenter = self.readerCenter {
-                UIView.animate(withDuration: 0.6, animations: {
-                    _ = readerCenter.currentPage?.webView?.js("nightMode(\(self.nightMode))")
-                    readerCenter.pageIndicatorView?.reloadColors()
-                    readerCenter.configureNavBar()
-                    readerCenter.scrollScrubber?.reloadColors()
-                    readerCenter.collectionView.backgroundColor = (self.nightMode == true ? self.readerContainer?.readerConfig.nightModeBackground : UIColor.white)
-                }, completion: { (finished: Bool) in
-                    NotificationCenter.default.post(name: Notification.Name(rawValue: "needRefreshPageMode"), object: nil)
-                })
+            self.defaults.set(false, forKey: "milkMode")
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "needRefreshPageMode"), object: nil)
+        }
+    }
+    
+    open var milkMode: Bool {
+        get { return self.defaults.bool(forKey: "milkMode") }
+        set (value) {
+            self.defaults.set(value, forKey: "milkMode")
+            self.defaults.set(false, forKey: kNightMode)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "needRefreshPageMode"), object: nil)
+        }
+    }
+    
+    open var styleCss: String {
+        if self.milkMode {
+            if pading == 2 {
+                return Bundle.frameworkBundle().path(forResource: "StyleMilk_pading2x", ofType: "css") ?? ""
+            } else if pading == 3 {
+                return Bundle.frameworkBundle().path(forResource: "StyleMilk_pading3x", ofType: "css") ?? ""
             }
+            return Bundle.frameworkBundle().path(forResource: "StyleMilk", ofType: "css") ?? ""
+        }
+        
+        if pading == 2 {
+            return  Bundle.frameworkBundle().path(forResource: "Style_pading2x", ofType: "css") ?? ""
+        } else if pading == 3 {
+            return  Bundle.frameworkBundle().path(forResource: "Style_pading3x", ofType: "css") ?? ""
+        }
+        
+        return Bundle.frameworkBundle().path(forResource: "Style", ofType: "css") ?? ""
+    }
+    
+    func webViewFrame() -> CGRect {
+        let bookmarkHeight: CGFloat = 60
+        var y: CGFloat = 25 + bookmarkHeight
+
+        var height = UIScreen.main.bounds.height
+        let statusbarHeight = UIApplication.shared.statusBarFrame.size.height
+
+        let paddingBottom: CGFloat = 59 + 26 + statusbarHeight
+
+        if pading == 2 {
+            y += UIDevice.current.userInterfaceIdiom == .pad ? 45 : 35
+        } else if pading == 3 {
+            y += UIDevice.current.userInterfaceIdiom == .pad ? 75 : 55
+        }
+        height -= y + paddingBottom
+
+        var frame = CGRect(x: UIScreen.main.bounds.origin.x, y: y, width: UIScreen.main.bounds.width, height: height)
+        return frame
+    }
+    
+    open var pading: Int {
+        get {
+            guard let padingValue = self.defaults.integer(forKey: "kPading") as? Int else {
+                return 1
+            }
+            return padingValue == 0 ? 1 : padingValue
+        }
+        set (value) {
+            self.defaults.set(value, forKey: "kPading")
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "needRefreshPageMode"), object: nil)
         }
     }
 
@@ -210,9 +288,11 @@ extension FolioReader {
         }
         set (font) {
             self.defaults.set(font.rawValue, forKey: kCurrentFontFamily)
-            _ = self.readerCenter?.currentPage?.webView?.js("setFontName('\(font.cssIdentifier)')")
+            _ = self.readerCenter?.currentPage?.webView.js("setFontName('\(font.cssIdentifier)')")
         }
     }
+    
+    
 
     /// Check current font size. Default .m
     open var currentFontSize: FolioReaderFontSize {
@@ -232,7 +312,14 @@ extension FolioReader {
                 return
             }
 
-            currentPage.webView?.js("setFontSize('\(currentFontSize.cssIdentifier)')")
+            currentPage.webView.js("setFontSize('\(currentFontSize.cssIdentifier)')")
+        }
+    }
+    
+    var currentLineHeight: Int {
+        get { return self.defaults.integer(forKey: kCurrentLineHeight) }
+        set (value) {
+            self.defaults.set(value, forKey: kCurrentLineHeight)
         }
     }
 
@@ -266,10 +353,27 @@ extension FolioReader {
         }
     }
 
+/*** DISPLAY MODE ***/
+    /// Check the current Display Mode
+    open var currentDisplayMode: DisplayMode {
+        get {
+            guard let rawValue = self.defaults.value(forKey: kDisplayMode) as? Int,
+                let style = DisplayMode(rawValue: rawValue) else {
+                    return DisplayMode.day
+            }
+            return style
+        }
+        set (value) {
+            self.defaults.set(value.rawValue, forKey: kDisplayMode)
+        }
+    }
+
+    
+    
     /// Check the current scroll direction. Default .defaultVertical
     open var currentScrollDirection: Int {
         get {
-            guard let value = self.defaults.value(forKey: kCurrentScrollDirection) as? Int else {
+             guard let value = self.defaults.value(forKey: kCurrentScrollDirection) as? Int else {
                 return FolioReaderScrollDirection.defaultVertical.rawValue
             }
 
@@ -306,7 +410,7 @@ extension FolioReader {
     }
 }
 
-// MARK: - Metadata
+// MARK: - Image Cover
 
 extension FolioReader {
 
@@ -316,16 +420,16 @@ extension FolioReader {
     /**
      Read Cover Image and Return an `UIImage`
      */
-    open class func getCoverImage(_ epubPath: String, unzipPath: String? = nil) throws -> UIImage {
+    open class func getCoverImage(_ epubPath: String, unzipPath: String? = nil) throws -> UIImage? {
         return try FREpubParser().parseCoverImage(epubPath, unzipPath: unzipPath)
     }
 
-    open class func getTitle(_ epubPath: String, unzipPath: String? = nil) throws -> String {
-        return try FREpubParser().parseTitle(epubPath, unzipPath: unzipPath)
+    open class func getTitle(_ epubPath: String) throws -> String? {
+        return try FREpubParser().parseTitle(epubPath)
     }
 
-    open class func getAuthorName(_ epubPath: String, unzipPath: String? = nil) throws-> String {
-        return try FREpubParser().parseAuthorName(epubPath, unzipPath: unzipPath)
+    open class func getAuthorName(_ epubPath: String) throws-> String? {
+        return try FREpubParser().parseAuthorName(epubPath)
     }
 }
 
@@ -339,14 +443,16 @@ extension FolioReader {
             return
         }
 
-        guard let currentPage = self.readerCenter?.currentPage, let webView = currentPage.webView else {
+        guard let bookId = self.readerContainer?.book.name, let currentPage = self.readerCenter?.currentPage else {
             return
         }
 
         let position = [
             "pageNumber": (self.readerCenter?.currentPageNumber ?? 0),
-            "pageOffsetX": webView.scrollView.contentOffset.x,
-            "pageOffsetY": webView.scrollView.contentOffset.y
+            "pageOffsetX": currentPage.webView.scrollView.contentOffset.x,
+            "pageOffsetY": currentPage.webView.scrollView.contentOffset.y,
+            "contentSizeWidth": currentPage.webView.scrollView.contentSize.width,
+            "progressX" : (currentPage.webView.scrollView.contentOffset.x / currentPage.webView.scrollView.contentSize.width)
             ] as [String : Any]
 
         self.savedPositionForCurrentBook = position
@@ -360,5 +466,113 @@ extension FolioReader {
         self.readerAudioPlayer?.stop(immediate: true)
         self.defaults.set(0, forKey: kCurrentTOCMenu)
         self.delegate?.folioReaderDidClose?(self)
+        self.delegate?.folioReaderDidClosed?()
     }
+}
+
+// MARK: - Public static functions. All Deprecated function
+
+@available(*, deprecated, message: "Shared instance removed. Use a local instance instead.")
+extension FolioReader {
+
+    private static var _sharedInstance = FolioReader()
+    open static var shared : FolioReader {
+        get { return _sharedInstance }
+        set { _sharedInstance = newValue }
+    }
+
+    /// Check the current Media Overlay or TTS style
+    static var currentMediaOverlayStyle: MediaOverlayStyle {
+        return FolioReader.shared.currentMediaOverlayStyle
+    }
+
+/*** DISPLAY MODE ***/
+    /// Check the current Display Mode
+    static var currentDisplayMode: DisplayMode {
+        return FolioReader.shared.currentDisplayMode
+    }
+
+    
+    /// Check if current theme is Night mode
+    open class var nightMode: Bool {
+        get { return FolioReader.shared.nightMode }
+        set { FolioReader.shared.nightMode = newValue }
+    }
+
+    /// Check if current theme is Milk mode
+    open class var milkMode: Bool {
+        get { return FolioReader.shared.milkMode }
+        set { FolioReader.shared.milkMode = newValue }
+    }
+
+    
+    /// Check current font name
+    open class var currentFont: FolioReaderFont {
+        get { return FolioReader.shared.currentFont }
+        set { FolioReader.shared.currentFont = newValue }
+    }
+
+    /// Check current font size
+    open class var currentFontSize: FolioReaderFontSize {
+        get { return FolioReader.shared.currentFontSize }
+        set { FolioReader.shared.currentFontSize = newValue }
+    }
+
+    /// Check the current scroll direction
+    open class var currentScrollDirection: Int {
+        get { return FolioReader.shared.currentScrollDirection }
+        set { FolioReader.shared.currentScrollDirection = newValue }
+    }
+
+    /// Check current audio rate, the speed of speech voice
+    open class var currentAudioRate: Int {
+        get { return FolioReader.shared.currentAudioRate }
+        set { FolioReader.shared.currentAudioRate = newValue }
+    }
+
+    /// Check if reader is open and ready
+    open class var isReaderReady : Bool {
+        return FolioReader.shared.isReaderReady
+    }
+
+    /// Save Reader state, book, page and scroll are saved
+    @available(*, deprecated, message: "You no longer need to call `saveReaderState` for `applicationWillResignActive` and `applicationWillTerminate`. FolioReader Already handle that.")
+    open class func saveReaderState() {
+        FolioReader.shared.saveReaderState()
+    }
+
+    /// Closes and save the reader current instance
+    open class func close() {
+        FolioReader.shared.close()
+    }
+
+    /// Check the current highlight style
+    open class var currentHighlightStyle: Int {
+        get { return FolioReader.shared.currentHighlightStyle }
+        set { FolioReader.shared.currentHighlightStyle = newValue }
+    }
+
+    /// Check if layout needs to change to fit Right To Left
+    open class var needsRTLChange: Bool {
+        return FolioReader.shared.needsRTLChange
+    }
+}
+
+// MARK: - Global Functions
+
+@available(*, deprecated, message: "Shared instance removed. Use a local instance instead.")
+func isNight<T> (_ f: T, _ l: T) -> T {
+    return FolioReader.shared.isNight(f, l)
+}
+
+@available(*, deprecated, message: "Shared instance removed. Use a local instance instead.")
+func isMilk<T> (_ f: T, _ l: T) -> T {
+    return FolioReader.shared.isMilk(f, l)
+}
+
+// MARK: - Scroll Direction Functions
+
+@available(*, deprecated, message: "Shared instance removed. Use a local instance instead.")
+func isDirection<T> (_ vertical: T, _ horizontal: T, _ horizontalContentVertical: T) -> T {
+    return FolioReader.shared.readerContainer!.readerConfig.isDirection(vertical, horizontal, horizontalContentVertical)
 }

@@ -8,13 +8,25 @@
 
 import UIKit
 
+
 /// The custom WebView used in each page
 open class FolioReaderWebView: UIWebView {
     var isColors = false
     var isShare = false
     var isOneWord = false
-
-    fileprivate weak var readerContainer: FolioReaderContainer?
+    var highlightMenu: HighlightMenu?
+    var highlightMenuIsVisible: Bool = false
+    
+    var tempJSONData: Data?
+    var noteWindow: Note?
+    var noteWidth: CGFloat = 300.0
+    var noteHeight: CGFloat = 250.0
+    var keyboardMargin: CGFloat = 70.0
+    var noteIsVisible: Bool = false
+    
+    var navBarView: ReaderNavBar?
+    
+    weak var readerContainer: FolioReaderContainer?
 
     fileprivate var readerConfig: FolioReaderConfig {
         guard let readerContainer = readerContainer else { return FolioReaderConfig() }
@@ -28,19 +40,22 @@ open class FolioReaderWebView: UIWebView {
 
     fileprivate var folioReader: FolioReader {
         guard let readerContainer = readerContainer else { return FolioReader() }
-        return readerContainer.folioReader
+        return self.readerContainer!.folioReader
     }
 
     override init(frame: CGRect) {
         fatalError("use init(frame:readerConfig:book:) instead.")
     }
 
-    init(frame: CGRect, readerContainer: FolioReaderContainer) {
+    init(frame: CGRect, readerContainer: FolioReaderContainer, readerPageNumber: Int) {
         self.readerContainer = readerContainer
-
         super.init(frame: frame)
     }
 
+    convenience init(frame: CGRect, readerContainer: FolioReaderContainer) {
+        self.init(frame: frame, readerContainer: readerContainer, readerPageNumber: 0)
+    }
+    
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -48,7 +63,9 @@ open class FolioReaderWebView: UIWebView {
     // MARK: - UIMenuController
 
     open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        guard readerConfig.useReaderMenuController else {
+        return false
+
+        guard (self.readerConfig.useReaderMenuController == true) else {
             return super.canPerformAction(action, withSender: sender)
         }
 
@@ -59,9 +76,9 @@ open class FolioReaderWebView: UIWebView {
         } else {
             if action == #selector(highlight(_:))
                 || (action == #selector(define(_:)) && isOneWord)
-                || (action == #selector(play(_:)) && (book.hasAudio || readerConfig.enableTTS))
-                || (action == #selector(share(_:)) && readerConfig.allowSharing)
-                || (action == #selector(copy(_:)) && readerConfig.allowSharing) {
+                || (action == #selector(play(_:)) && (self.book.hasAudio() == true || self.readerConfig.enableTTS == true))
+                || (action == #selector(share(_:)) && self.readerConfig.allowSharing == true)
+                || (action == #selector(copy(_:)) && self.readerConfig.allowSharing == true) {
                 return true
             }
             return false
@@ -71,48 +88,50 @@ open class FolioReaderWebView: UIWebView {
     // MARK: - UIMenuController - Actions
 
     @objc func share(_ sender: UIMenuController) {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        let shareImage = UIAlertAction(title: self.readerConfig.localizedShareImageQuote, style: .default, handler: { (action) -> Void in
-            if self.isShare {
-                if let textToShare = self.js("getHighlightContent()") {
-                    self.folioReader.readerCenter?.presentQuoteShare(textToShare)
-                }
-            } else {
-                if let textToShare = self.js("getSelectedText()") {
-                    self.folioReader.readerCenter?.presentQuoteShare(textToShare)
-
-                    self.clearTextSelection()
-                }
-            }
-            self.setMenuVisible(false)
-        })
-
-        let shareText = UIAlertAction(title: self.readerConfig.localizedShareTextQuote, style: .default) { (action) -> Void in
-            if self.isShare {
-                if let textToShare = self.js("getHighlightContent()") {
-                    self.folioReader.readerCenter?.shareHighlight(textToShare, rect: sender.menuFrame)
-                }
-            } else {
-                if let textToShare = self.js("getSelectedText()") {
-                    self.folioReader.readerCenter?.shareHighlight(textToShare, rect: sender.menuFrame)
-                }
-            }
-            self.setMenuVisible(false)
-        }
-
-        let cancel = UIAlertAction(title: self.readerConfig.localizedCancel, style: .cancel, handler: nil)
-
-        alertController.addAction(shareImage)
-        alertController.addAction(shareText)
-        alertController.addAction(cancel)
-
-        if let alert = alertController.popoverPresentationController {
-            alert.sourceView = self.folioReader.readerCenter?.currentPage
-            alert.sourceRect = sender.menuFrame
-        }
-
-        self.folioReader.readerCenter?.present(alertController, animated: true, completion: nil)
+        
+        
+//        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//
+//        let shareImage = UIAlertAction(title: self.readerConfig.localizedShareImageQuote, style: .default, handler: { (action) -> Void in
+//            if self.isShare {
+//                if let textToShare = self.js("getHighlightContent()") {
+//                    self.folioReader.readerCenter?.presentQuoteShare(textToShare)
+//                }
+//            } else {
+//                if let textToShare = self.js("getSelectedText()") {
+//                    self.folioReader.readerCenter?.presentQuoteShare(textToShare)
+//
+//                    self.clearTextSelection()
+//                }
+//            }
+//            self.setMenuVisible(false)
+//        })
+//
+//        let shareText = UIAlertAction(title: self.readerConfig.localizedShareTextQuote, style: .default) { (action) -> Void in
+//            if self.isShare {
+//                if let textToShare = self.js("getHighlightContent()") {
+//                    self.folioReader.readerCenter?.shareHighlight(textToShare, rect: sender.menuFrame)
+//                }
+//            } else {
+//                if let textToShare = self.js("getSelectedText()") {
+//                    self.folioReader.readerCenter?.shareHighlight(textToShare, rect: sender.menuFrame)
+//                }
+//            }
+//            self.setMenuVisible(false)
+//        }
+//
+//        let cancel = UIAlertAction(title: self.readerConfig.localizedCancel, style: .cancel, handler: nil)
+//
+//        alertController.addAction(shareImage)
+//        alertController.addAction(shareText)
+//        alertController.addAction(cancel)
+//
+//        if let alert = alertController.popoverPresentationController {
+//            alert.sourceView = self.folioReader.readerCenter?.currentPage
+//            alert.sourceRect = sender.menuFrame
+//        }
+//
+//        self.folioReader.readerCenter?.present(alertController, animated: true, completion: nil)
     }
 
     func colors(_ sender: UIMenuController?) {
@@ -124,46 +143,124 @@ open class FolioReaderWebView: UIWebView {
     func remove(_ sender: UIMenuController?) {
         if let removedId = js("removeThisHighlight()") {
             Highlight.removeById(withConfiguration: self.readerConfig, highlightId: removedId)
+            readerContainer?.centerViewController?.currentPage?.addNotesIfNeeded()
         }
         setMenuVisible(false)
     }
 
-    @objc func highlight(_ sender: UIMenuController?) {
-        let highlightAndReturn = js("highlightString('\(HighlightStyle.classForStyle(self.folioReader.currentHighlightStyle))')")
-        let jsonData = highlightAndReturn?.data(using: String.Encoding.utf8)
+    @objc func highlight(_ sender: UIMenuController?) -> Bool {
 
+        if let text = js("getSelectedText()") as? String, text.contains("\n") {
+            hiddenMenu()
+            return false
+        }
+        
+        let highlightAndReturn = js("highlightString('\(HighlightStyle.classForStyle(self.folioReader.currentHighlightStyle))')")
+        guard let jsonData = highlightAndReturn?.data(using: String.Encoding.utf8) else { return false }
+        
         do {
-            let json = try JSONSerialization.jsonObject(with: jsonData!, options: []) as! NSArray
-            let dic = json.firstObject as! [String: String]
-            let rect = CGRectFromString(dic["rect"]!)
-            guard let startOffset = dic["startOffset"] else {
-                return
+            guard let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? NSArray else { return false }
+            guard let dic = json.firstObject as? [String: String] else { return false }
+            guard let rectString = dic["rect"] as? String else { return false }
+            guard let startOffset = dic["startOffset"] else { return false }
+            guard let endOffset = dic["endOffset"] else { return false }
+            
+            let rect = NSCoder.cgRect(for: rectString)
+
+            guard
+                let html = js("getHTML()"),
+                let identifier = dic["id"] else {
+                    return false
             }
-            guard let endOffset = dic["endOffset"] else {
-                return
+
+            let pageNumber = folioReader.readerCenter?.currentPageNumber ?? 0
+            let note = "default note"
+            let isNoteExist = false
+
+            let match = Highlight.MatchingHighlight(text: html,
+                                                    id: identifier,
+                                                    startOffset: startOffset,
+                                                    endOffset: endOffset,
+                                                    currentPage: pageNumber,
+                                                    note: note,
+                                                    isNote: isNoteExist)
+            
+            guard let highlight = Highlight.matchHighlight(readerConfig: readerConfig, match, text: js("getSelectedText()") as? String) else {
+                hiddenMenu()
+                return false
             }
 
             createMenu(options: true)
             setMenuVisible(true, andRect: rect)
-
-            // Persist
-            guard
-                let html = js("getHTML()"),
-                let identifier = dic["id"],
-                let bookId = (self.book.name as NSString?)?.deletingPathExtension else {
-                    return
-            }
-
-            let pageNumber = folioReader.readerCenter?.currentPageNumber ?? 0
-            let match = Highlight.MatchingHighlight(text: html, id: identifier, startOffset: startOffset, endOffset: endOffset, bookId: bookId, currentPage: pageNumber)
-            let highlight = Highlight.matchHighlight(match)
-            highlight?.persist(withConfiguration: self.readerConfig)
-
+            
+            highlight.persist(withConfiguration: self.readerConfig)
+            return true
         } catch {
             print("Could not receive JSON")
+            return false
         }
     }
 
+    func highlightForNote(_ sender: UIMenuController?) -> Bool {
+        if let text = js("getSelectedText()") as? String, text.contains("\n") {
+            hiddenMenu()
+            return false
+        }
+        let highlightAndReturn = js("highlightString('\(HighlightStyle.classForStyle(self.folioReader.currentHighlightStyle))')")
+        guard let jsonData = highlightAndReturn?.data(using: String.Encoding.utf8) else { return false }
+        tempJSONData = jsonData
+        return true
+    }
+
+    
+    func createHighlightForNote(_ sender: UIMenuController?) -> Bool {
+        guard let jsonData = tempJSONData else { return false }
+        do {
+            guard let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as? NSArray else { return false }
+            guard let dic = json.firstObject as? [String: String] else { return false }
+            guard let rectString = dic["rect"] as? String else { return false }
+            guard let startOffset = dic["startOffset"] else { return false }
+            guard let endOffset = dic["endOffset"] else { return false }
+            
+            let rect = NSCoder.cgRect(for: rectString)
+            
+            guard
+                let html = js("getHTML()"),
+                let identifier = dic["id"] else {
+                    return false
+            }
+            
+            let pageNumber = folioReader.readerCenter?.currentPageNumber ?? 0
+            let note = noteWindow?.noteView.text ?? "default note"
+            let isNoteExist = true
+            
+            let match = Highlight.MatchingHighlight(text: html,
+                                                    id: identifier,
+                                                    startOffset: startOffset,
+                                                    endOffset: endOffset,
+                                                    currentPage: pageNumber,
+                                                    note: note,
+                                                    isNote: isNoteExist)
+            
+            guard let highlight = Highlight.matchHighlight(readerConfig: readerConfig, match, text: js("getSelectedText()") as? String) else {
+                hiddenMenu()
+                return false
+            }
+            highlight.persist(withConfiguration: self.readerConfig)
+            readerContainer?.centerViewController?.currentPage?.addNotesIfNeeded()
+            
+            return true
+        } catch {
+            print("Could not receive JSON")
+            return false
+        }
+    }
+    
+    func dismissHighlightForNote() {
+        
+        
+    }
+    
     @objc func define(_ sender: UIMenuController?) {
         guard let selectedText = js("getSelectedText()") else {
             return
@@ -215,6 +312,7 @@ open class FolioReaderWebView: UIWebView {
     // MARK: - Create and show menu
 
     func createMenu(options: Bool) {
+        return
         guard (self.readerConfig.useReaderMenuController == true) else {
             return
         }
@@ -231,9 +329,11 @@ open class FolioReaderWebView: UIWebView {
         let underline = UIImage(readerImageNamed: "underline-marker")
 
         let menuController = UIMenuController.shared
-
+        
         let highlightItem = UIMenuItem(title: self.readerConfig.localizedHighlightMenu, action: #selector(highlight(_:)))
         let playAudioItem = UIMenuItem(title: self.readerConfig.localizedPlayMenu, action: #selector(play(_:)))
+//        let highlightItem = UIMenuItem(title: "", image: #imageLiteral(resourceName: "list_note"), action: #selector(define(_:)))
+        
         let defineItem = UIMenuItem(title: self.readerConfig.localizedDefineMenu, action: #selector(define(_:)))
         let colorsItem = UIMenuItem(title: "C", image: colors) { [weak self] _ in
             self?.colors(menuController)
@@ -275,7 +375,7 @@ open class FolioReaderWebView: UIWebView {
             // default menu
             menuItems = [highlightItem, defineItem, shareItem]
 
-            if self.book.hasAudio || self.readerConfig.enableTTS {
+            if (self.book.hasAudio() == true || self.readerConfig.enableTTS == true) {
                 menuItems.insert(playAudioItem, at: 0)
             }
 
@@ -285,13 +385,101 @@ open class FolioReaderWebView: UIWebView {
         }
         
         menuController.menuItems = menuItems
+/***/
+    }
+    
+    func showMenu(touchPoint: CGPoint) {
+        if highlightMenuIsVisible == true {
+            hiddenMenu()
+            return
+        }
+        if folioReader.readerCenter?.navBarShouldHide == true {
+            folioReader.readerCenter?.hideBars()
+        }
+
+        highlightMenuIsVisible = true
+        highlightMenu?.removeFromSuperview()
+        hiddenNote()
+        highlightMenu = HighlightMenu.instanceFromNib()
+        highlightMenu?.folioReaderWebView = self
+
+        let webViewFrame = folioReader.webViewFrame()
+        
+        var x = touchPoint.x - 75 + webViewFrame.minX
+        var y = touchPoint.y - 74 + webViewFrame.minY
+
+        if y < 0.0 { x = 0.0 }
+        if x < 0.0 { y = 0.0 }
+        if x + 150.0 > self.superview?.frame.width { x = (self.superview?.frame.width ?? 0) - 150 }
+        highlightMenu?.frame = CGRect(x: x, y: y, width: 150, height: 64)
+        self.superview?.addSubview(highlightMenu!)
+    }
+    
+    func showHilightMenu(touchPoint: CGPoint) {
+        if highlightMenuIsVisible == true {
+            hiddenMenu()
+            return
+        }
+        highlightMenuIsVisible = true
+        highlightMenu?.removeFromSuperview()
+        highlightMenu = HighlightMenu.colorMenuInstanceFromNib()
+        highlightMenu?.folioReaderWebView = self
+
+        let webViewFrame = folioReader.webViewFrame()
+
+        var x = touchPoint.x - 119 + webViewFrame.minX
+        var y = touchPoint.y - 64 + webViewFrame.minY
+        
+        if x < 0.0 { x = 0.0 }
+        if y < 0.0 { y = 0.0 }
+        if x + 238.0 > self.superview?.frame.width { x = (self.superview?.frame.width ?? 0) - 238 }
+
+        highlightMenu?.frame = CGRect(x: x, y: y, width: 238, height: 64)
+        self.superview?.addSubview(highlightMenu!)
+    }
+    
+    func showNote(highlight: (String, String)? = nil) {
+        highlightMenuIsVisible = false
+        highlightMenu?.removeFromSuperview()
+        noteIsVisible = true
+        guard let noteView = Note.instanceFromNib() as? Note else { return }
+        noteWindow = noteView
+        noteWindow?.folioReaderWebView = self
+        noteWindow?.frame = CGRect(x: (UIScreen.main.bounds.width - noteWidth)/2, y: (UIScreen.main.bounds.height - noteHeight)/2, width: noteWidth , height: noteHeight)
+        noteWindow?.noteView.font = UIFont.systemFont(ofSize: 22)
+        noteWindow?.noteView.text = highlight?.1 ?? ""
+        noteWindow?.highlightTuple = highlight
+        if let noteWindow = noteWindow {
+            self.readerContainer?.centerViewController?.view.addSubview(noteWindow)
+        }
+    }
+
+    func setupNoteFrame(keyboardHeight: CGFloat) {
+        noteWindow?.frame.origin.y = (UIScreen.main.bounds.size.height - keyboardHeight - noteHeight - keyboardMargin)/2
+    }
+    
+    func hiddenNote() {
+        noteIsVisible = false
+        noteWindow?.noteView.resignFirstResponder()
+        noteWindow?.removeFromSuperview()
+    }
+    
+    func hiddenMenu() {
+        isUserInteractionEnabled = false
+        isUserInteractionEnabled = true
+        highlightMenuIsVisible = false
+        highlightMenu?.removeFromSuperview()
+        hiddenNote()
     }
     
     open func setMenuVisible(_ menuVisible: Bool, animated: Bool = true, andRect rect: CGRect = CGRect.zero) {
+        
         if !menuVisible && isShare || !menuVisible && isColors {
             isColors = false
             isShare = false
         }
+        
+        hiddenMenu()
         
         if menuVisible  {
             if !rect.equalTo(CGRect.zero) {
@@ -304,7 +492,7 @@ open class FolioReaderWebView: UIWebView {
     
     // MARK: - Java Script Bridge
     
-    @discardableResult open func js(_ script: String) -> String? {
+    @discardableResult func js(_ script: String) -> String? {
         let callback = self.stringByEvaluatingJavaScript(from: script)
         if callback!.isEmpty { return nil }
         return callback
@@ -329,10 +517,24 @@ open class FolioReaderWebView: UIWebView {
             break
         case .horizontal:
             scrollView.isPagingEnabled = true
-            paginationMode = .leftToRight
+            paginationMode = folioReader.needsRTLChange == true ? .rightToLeft : .leftToRight
             paginationBreakingMode = .page
             scrollView.bounces = false
             break
         }
+    }
+    
+    func highlightAllOccurencesOfString(str:String) -> Int {
+        let result = js("uiWebview_HighlightAllOccurencesOfString('\(str)')")
+        let result2 = js("uiWebview_SearchResultCount")
+        return  Int(result2!)!
+    }
+    
+    func scrollTo(index:Int)  {
+        js("uiWebview_ScrollTo('\(index)')")
+    }
+    
+    func removeAllHighlights() {
+        js("uiWebview_RemoveAllHighlights()")
     }
 }

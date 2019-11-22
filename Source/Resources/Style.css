@@ -57,7 +57,6 @@ body {
 table {
     border-collapse: collapse;
     border-spacing: 0;
-    word-break: normal;
 }
 tbody, tfoot, thead {
     vertical-align: middle !important;
@@ -229,7 +228,6 @@ html.nightMode .highlight-blue {background:rgba(173, 216, 255, 0.9)}
 html.nightMode .highlight-pink {background:rgba(255, 176, 202, 0.9)}
 html.nightMode .highlight-underline {border-bottom: 2px solid rgba(240, 40, 20, 0.6)}
 
-
 /*
  *
  * Font classes
@@ -246,6 +244,10 @@ html.textSizeTwo, .textSizeTwo body { font-size: 15px !important; }
 html.textSizeThree, .textSizeThree body { font-size: 17px !important; }
 html.textSizeFour, .textSizeFour body { font-size: 19px !important; }
 html.textSizeFive, .textSizeFive body { font-size: 21px !important; }
+html.textSizeSix, .textSizeSix body { font-size: 23px !important; }
+html.textSizeSeven, .textSizeSeven body { font-size: 26px !important; }
+html.textSizeEight, .textSizeEight body { font-size: 30px !important; }
+html.textSizeNine, .textSizeNine body { font-size: 50px !important; }
 
 h1 {
     font-size: 2em;
@@ -276,6 +278,14 @@ body {
     -webkit-hyphens: auto !important;
     hyphens: auto !important;
 }
+
+.lineHeightOne, .lineHeightOne p, .lineHeightOne span, .lineHeightOne div { font-size: 1em;
+    line-height: 1.0 !important; }
+.lineHeightTwo, .lineHeightTwo p, .lineHeightTwo span, .lineHeightTwo div { font-size: 1em;
+    line-height: 2.0 !important; }
+.lineHeightThree, .lineHeightThree p, .lineHeightThree span, .lineHeightThree div { font-size: 1em;
+    line-height: 3.0 !important; }
+
 p, span, div {
     font-size: 1em;
     line-height: 1.5 !important;

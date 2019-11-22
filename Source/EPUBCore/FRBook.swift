@@ -10,78 +10,82 @@
 import UIKit
 
 open class FRBook: NSObject {
+    var resources = FRResources()
     var metadata = FRMetadata()
     var spine = FRSpine()
     var smils = FRSmils()
+    var tableOfContents: [FRTocReference]!
+    var flatTableOfContents: [FRTocReference]!
+    var opfResource: FRResource!
+    var tocResource: FRResource?
+    var coverImage: FRResource?
     var version: Double?
-    
-    public var opfResource: FRResource!
-    public var tocResource: FRResource?
-    public var uniqueIdentifier: String?
-    public var coverImage: FRResource?
+    var uniqueIdentifier: String?
     public var name: String?
-    public var resources = FRResources()
-    public var tableOfContents: [FRTocReference]!
-    public var flatTableOfContents: [FRTocReference]!
 
-    var hasAudio: Bool {
-        return smils.smils.count > 0
+    func hasAudio() -> Bool {
+        return smils.smils.count > 0 ? true : false
     }
 
-    var title: String? {
+    func title() -> String? {
         return metadata.titles.first
     }
 
-    var authorName: String? {
+    func authorName() -> String? {
         return metadata.creators.first?.name
     }
 
     // MARK: - Media Overlay Metadata
     // http://www.idpf.org/epub/301/spec/epub-mediaoverlays.html#sec-package-metadata
 
-    var duration: String? {
-        return metadata.find(byProperty: "media:duration")?.value
+    func duration() -> String? {
+        return metadata.findMetaByProperty("media:duration");
     }
 
-    var activeClass: String {
-        guard let className = metadata.find(byProperty: "media:active-class")?.value else {
+    // @NOTE: should "#" be automatically prefixed with the ID?
+    func durationFor(_ ID: String) -> String? {
+        return metadata.findMetaByProperty("media:duration", refinedBy: ID)
+    }
+
+
+    func activeClass() -> String {
+        guard let className = metadata.findMetaByProperty("media:active-class") else {
             return "epub-media-overlay-active"
         }
         return className
     }
 
-    var playbackActiveClass: String {
-        guard let className = metadata.find(byProperty: "media:playback-active-class")?.value else {
+    func playbackActiveClass() -> String {
+        guard let className = metadata.findMetaByProperty("media:playback-active-class") else {
             return "epub-media-overlay-playing"
         }
         return className
     }
+
 
     // MARK: - Media Overlay (SMIL) retrieval
 
     /**
      Get Smil File from a resource (if it has a media-overlay)
      */
-    func smilFileForResource(_ resource: FRResource?) -> FRSmilFile? {
-        guard let resource = resource, let mediaOverlay = resource.mediaOverlay else { return nil }
+    func smilFileForResource(_ resource: FRResource!) -> FRSmilFile! {
+        if( resource == nil || resource.mediaOverlay == nil ){
+            return nil
+        }
 
         // lookup the smile resource to get info about the file
-        guard let smilResource = resources.findById(mediaOverlay) else { return nil }
+        let smilResource = resources.findById(resource.mediaOverlay)
 
         // use the resource to get the file
-        return smils.findByHref(smilResource.href)
+        return smils.findByHref( smilResource!.href )
     }
 
-    func smilFile(forHref href: String) -> FRSmilFile? {
+    func smilFileForHref(_ href: String) -> FRSmilFile! {
         return smilFileForResource(resources.findByHref(href))
     }
 
-    func smilFile(forId ID: String) -> FRSmilFile? {
+    func smilFileForId(_ ID: String) -> FRSmilFile! {
         return smilFileForResource(resources.findById(ID))
     }
     
-    // @NOTE: should "#" be automatically prefixed with the ID?
-    func duration(for ID: String) -> String? {
-        return metadata.find(byProperty: "media:duration", refinedBy: ID)?.value
-    }
 }

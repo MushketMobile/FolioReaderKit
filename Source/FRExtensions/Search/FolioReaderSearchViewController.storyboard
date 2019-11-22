@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="ARIALUNI.TTF">
+            <string>ArialUnicodeMS</string>
+        </array>
+    </customFonts>
+    <scenes>
+        <!--Folio Reader Search View Controller-->
+        <scene sceneID="Ejg-9H-fIG">
+            <objects>
+                <viewController storyboardIdentifier="FolioReaderSearchViewController" id="E2l-M7-K5q" customClass="FolioReaderSearchViewController" customModule="FolioReaderKit" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="opu-mk-7jw"/>
+                        <viewControllerLayoutGuide type="bottom" id="jyC-p5-41b"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1bX-x2-sHT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_background_about" translatesAutoresizingMaskIntoConstraints="NO" id="cZ9-rd-006">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            </imageView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="65" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ptv-e8-8Dd">
+                                <rect key="frame" x="25" y="80" width="325" height="487"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="E2l-M7-K5q" id="FXN-BQ-Au3"/>
+                                    <outlet property="delegate" destination="E2l-M7-K5q" id="p40-AH-GWU"/>
+                                </connections>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="תוצאות חיפוש" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ObB-zd-HlD">
+                                <rect key="frame" x="124" y="35" width="127" height="29.5"/>
+                                <fontDescription key="fontDescription" name="ArialUnicodeMS" family="Arial Unicode MS" pointSize="22"/>
+                                <color key="textColor" red="0.792156862745098" green="0.8784313725490196" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="0xh-cs-HKK">
+                                <rect key="frame" x="25" y="323" width="325" height="20"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g0a-3R-0fZ">
+                                <rect key="frame" x="188" y="368.5" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" name="ArialUnicodeMS" family="Arial Unicode MS" pointSize="15"/>
+                                <color key="textColor" red="0.79215686269999996" green="0.87843137250000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ObB-zd-HlD" firstAttribute="top" secondItem="opu-mk-7jw" secondAttribute="bottom" constant="15" id="4QC-zd-Ob9"/>
+                            <constraint firstAttribute="trailing" secondItem="Ptv-e8-8Dd" secondAttribute="trailing" constant="25" id="8Vp-us-7Dr" customClass="DeviceLayoutConstraint" customModule="DeviceLayout">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4_7">
+                                        <real key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4">
+                                        <real key="value" value="15"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch5_5">
+                                        <real key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch9_7">
+                                        <real key="value" value="160"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch12_9">
+                                        <real key="value" value="160"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch9_7Landscape">
+                                        <real key="value" value="125"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch12_9Landscape">
+                                        <real key="value" value="125"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </constraint>
+                            <constraint firstItem="jyC-p5-41b" firstAttribute="top" secondItem="Ptv-e8-8Dd" secondAttribute="bottom" constant="100" id="DIV-3i-aYB" customClass="DeviceLayoutConstraint" customModule="DeviceLayout">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4_7">
+                                        <real key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch5_5">
+                                        <real key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4">
+                                        <real key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch9_7">
+                                        <real key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch12_9">
+                                        <real key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </constraint>
+                            <constraint firstAttribute="trailing" secondItem="cZ9-rd-006" secondAttribute="trailing" id="JAW-Yk-Hmr"/>
+                            <constraint firstItem="jyC-p5-41b" firstAttribute="top" secondItem="cZ9-rd-006" secondAttribute="bottom" id="VDK-4C-VLg"/>
+                            <constraint firstItem="0xh-cs-HKK" firstAttribute="centerX" secondItem="1bX-x2-sHT" secondAttribute="centerX" id="Y2n-Wq-ADx"/>
+                            <constraint firstItem="cZ9-rd-006" firstAttribute="top" secondItem="opu-mk-7jw" secondAttribute="bottom" id="e70-Qd-wze"/>
+                            <constraint firstItem="0xh-cs-HKK" firstAttribute="centerY" secondItem="1bX-x2-sHT" secondAttribute="centerY" id="eaN-By-hrH"/>
+                            <constraint firstItem="Ptv-e8-8Dd" firstAttribute="top" secondItem="opu-mk-7jw" secondAttribute="bottom" constant="60" id="iJH-XD-3Ms"/>
+                            <constraint firstItem="ObB-zd-HlD" firstAttribute="centerX" secondItem="1bX-x2-sHT" secondAttribute="centerX" id="jZk-Yi-vtY"/>
+                            <constraint firstItem="cZ9-rd-006" firstAttribute="leading" secondItem="1bX-x2-sHT" secondAttribute="leading" id="knJ-aV-7S9"/>
+                            <constraint firstItem="g0a-3R-0fZ" firstAttribute="centerX" secondItem="0xh-cs-HKK" secondAttribute="centerX" id="pcS-EO-TDb"/>
+                            <constraint firstItem="g0a-3R-0fZ" firstAttribute="centerY" secondItem="0xh-cs-HKK" secondAttribute="centerY" constant="35" id="pnG-B0-Ubd"/>
+                            <constraint firstItem="Ptv-e8-8Dd" firstAttribute="leading" secondItem="1bX-x2-sHT" secondAttribute="leading" constant="25" id="qnb-rC-wHW" customClass="DeviceLayoutConstraint" customModule="DeviceLayout">
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4_7">
+                                        <real key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch4">
+                                        <real key="value" value="15"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch5_5">
+                                        <real key="value" value="25"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch9_7">
+                                        <real key="value" value="160"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch12_9">
+                                        <real key="value" value="160"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch9_7Landscape">
+                                        <real key="value" value="125"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="inch12_9Landscape">
+                                        <real key="value" value="125"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </constraint>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activity" destination="0xh-cs-HKK" id="vaR-m5-TKK"/>
+                        <outlet property="backgroundImageView" destination="cZ9-rd-006" id="9bT-Q7-SfT"/>
+                        <outlet property="searchingLabel" destination="g0a-3R-0fZ" id="cW2-fc-bCP"/>
+                        <outlet property="tableView" destination="Ptv-e8-8Dd" id="Vgh-Nl-vqn"/>
+                        <outlet property="titleLabel" destination="ObB-zd-HlD" id="gaa-TN-oBh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oNK-8B-tyi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-231.19999999999999" y="-671.51424287856082"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="icon_background_about" width="375" height="667"/>
+    </resources>
+</document>
