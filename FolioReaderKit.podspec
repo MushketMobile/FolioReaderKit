@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "FolioReaderKit"
-  s.version          = "1.4.2"
+  s.version          = "1.4.3"
   s.summary          = "A Swift ePub reader and parser framework for iOS."
   s.description  = <<-DESC
                    Written in Swift.
@@ -18,9 +18,9 @@ Pod::Spec.new do |s|
   s.requires_arc  = true
 
   s.source_files = [
-    'Source/*.{h,swift}',
-    'Source/**/*.swift',
-    'Vendor/**/*.swift',
+    'Source/*.{h,swift,xib,storyboard}',
+    'Source/**/*.{h,swift,xib,storyboard}',
+    'Vendor/**/*.{h,swift,xib,storyboard}',
   ]
   s.resources = [
     'Source/**/*.{js,css}',
