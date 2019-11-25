@@ -322,7 +322,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     
     fileprivate func frameNavBarView() -> CGRect {
         var y: CGFloat = 0.0
-        var height: CGFloat = 44.0
+        var height: CGFloat = 64.0
         if UIDevice().userInterfaceIdiom == .phone {
             if UIScreen.main.nativeBounds.height == 1624.0 ||
                 UIScreen.main.nativeBounds.height == 2436.0 {
@@ -338,7 +338,7 @@ open class FolioReaderCenter: UIViewController, UICollectionViewDelegate, UIColl
     }
     
     fileprivate func frameBookTitleView() -> CGRect {
-        var y: CGFloat = 44.0
+        var y: CGFloat = 64.0
         if UIDevice().userInterfaceIdiom == .phone {
             if UIScreen.main.nativeBounds.height == 1624.0 ||
                 UIScreen.main.nativeBounds.height == 2436.0 {
