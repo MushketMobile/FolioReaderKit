@@ -188,7 +188,10 @@ extension FolioReader {
     open func presentReader(parentViewController: UIViewController, withEpubPath epubPath: String, andConfig config: FolioReaderConfig, shouldRemoveEpub: Bool = false, animated:
         Bool = true) {
         var readerContainer = FolioReaderContainer(withConfig: config, folioReader: self, epubPath: epubPath, removeEpub: shouldRemoveEpub)
+        readerContainer.modalPresentationStyle = .overFullScreen
+        
         self.readerContainer = readerContainer
+//        parentViewController.navigationController?.pushViewController(readerContainer, animated: true)
         parentViewController.present(readerContainer, animated: animated, completion: nil)
         addObservers()
 

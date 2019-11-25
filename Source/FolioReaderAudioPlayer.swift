@@ -38,24 +38,24 @@ open class FolioReaderAudioPlayer: NSObject {
 
         super.init()
 
-        UIApplication.shared.beginReceivingRemoteControlEvents()
+//        UIApplication.shared.beginReceivingRemoteControlEvents()
+//
+//        // this is needed to the audio can play even when the "silent/vibrate" toggle is on
+//        let session = AVAudioSession.sharedInstance()
+//        if #available(iOS 10.0, *) {
+//            try? session.setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault)
+//
+////            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+//        } else {
+//            // Fallback on earlier versions
+//        }
+//        try? session.setActive(true)
 
-        // this is needed to the audio can play even when the "silent/vibrate" toggle is on
-        let session = AVAudioSession.sharedInstance()
-        if #available(iOS 10.0, *) {
-            try? session.setCategory(AVAudioSessionCategoryPlayAndRecord, mode: AVAudioSessionModeDefault)
-            
-//            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-        } else {
-            // Fallback on earlier versions
-        }
-        try? session.setActive(true)
-
-        self.updateNowPlayingInfo()
+     //   self.updateNowPlayingInfo()
     }
 
     deinit {
-        UIApplication.shared.endReceivingRemoteControlEvents()
+//        UIApplication.shared.endReceivingRemoteControlEvents()
     }
 
     // MARK: Reading speed

@@ -311,7 +311,7 @@ public class ReaderProgressManager: NSObject {
         do {
             let realm = try Realm(configuration: (folioReader.readerContainer?.readerConfig.realmConfiguration)!)
             realm.beginWrite()
-            realm.add(progress, update: false)
+            realm.add(progress, update: .all)
             try realm.commitWrite()
             progressModel = progress
             clear()

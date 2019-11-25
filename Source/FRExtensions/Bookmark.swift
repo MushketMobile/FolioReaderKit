@@ -99,7 +99,7 @@ extension Bookmark {
         do {
             let realm = try Realm(configuration: readerConfig.realmConfiguration)
             realm.beginWrite()
-            realm.add(bookMark, update: true)
+            realm.add(bookMark, update: .modified)
             try realm.commitWrite()
             completion?(nil)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: "com.app.GetBooksApp.Notification.Name.Bookmark.add"),

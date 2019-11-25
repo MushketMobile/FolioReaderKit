@@ -30,7 +30,7 @@ open class ProgressModel: Object {
     open var sectionsLanscape = List<Section>()
     open var sectionsPortrait = List<Section>()
 
-//    override open class func primaryKey()-> String {
-//        return "highlightId"
-//    }
+    override open class func primaryKey()-> String {
+        return "bookId"
+    }
 }

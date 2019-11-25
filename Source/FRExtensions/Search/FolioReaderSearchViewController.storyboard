@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -17,7 +15,7 @@
         <!--Folio Reader Search View Controller-->
         <scene sceneID="Ejg-9H-fIG">
             <objects>
-                <viewController storyboardIdentifier="FolioReaderSearchViewController" id="E2l-M7-K5q" customClass="FolioReaderSearchViewController" customModule="FolioReaderKit" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FolioReaderSearchViewController" modalPresentationStyle="fullScreen" id="E2l-M7-K5q" customClass="FolioReaderSearchViewController" customModule="FolioReaderKit" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="opu-mk-7jw"/>
                         <viewControllerLayoutGuide type="bottom" id="jyC-p5-41b"/>
@@ -27,10 +25,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_background_about" translatesAutoresizingMaskIntoConstraints="NO" id="cZ9-rd-006">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="65" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ptv-e8-8Dd">
-                                <rect key="frame" x="25" y="80" width="325" height="487"/>
+                                <rect key="frame" x="25" y="60" width="325" height="507"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <outlet property="dataSource" destination="E2l-M7-K5q" id="FXN-BQ-Au3"/>
@@ -38,7 +36,7 @@
                                 </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="תוצאות חיפוש" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ObB-zd-HlD">
-                                <rect key="frame" x="124" y="35" width="127" height="29.5"/>
+                                <rect key="frame" x="124" y="15" width="127" height="29.5"/>
                                 <fontDescription key="fontDescription" name="ArialUnicodeMS" family="Arial Unicode MS" pointSize="22"/>
                                 <color key="textColor" red="0.792156862745098" green="0.8784313725490196" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -47,7 +45,7 @@
                                 <rect key="frame" x="25" y="323" width="325" height="20"/>
                             </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g0a-3R-0fZ">
-                                <rect key="frame" x="188" y="368.5" width="0.0" height="0.0"/>
+                                <rect key="frame" x="187.5" y="368.5" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" name="ArialUnicodeMS" family="Arial Unicode MS" pointSize="15"/>
                                 <color key="textColor" red="0.79215686269999996" green="0.87843137250000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>

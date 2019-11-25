@@ -135,7 +135,7 @@ open class FolioReaderContainer: UIViewController {
         self.readerConfig.shouldHideNavigationOnTap = ((hideBars == true) ? true : self.readerConfig.shouldHideNavigationOnTap)
 
         self.centerViewController = FolioReaderCenter(withContainer: self)
-        
+        self.centerViewController?.modalPresentationStyle = .fullScreen
         if let rootViewController = self.centerViewController {
             self.centerNavigationController = UINavigationController(rootViewController: rootViewController)
         }
@@ -183,7 +183,7 @@ open class FolioReaderContainer: UIViewController {
 
                     // Add audio player if needed
                     if (self.book.hasAudio() == true || self.readerConfig.enableTTS == true) {
-                        self.addAudioPlayer()
+//                        self.addAudioPlayer()
                     }
                     self.centerViewController?.reloadData()
                     self.folioReader.isReaderReady = true
